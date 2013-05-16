@@ -1,0 +1,14 @@
+Package: rnbn
+Type: Package
+Title: Access NBN data
+Version: 0.1
+Date: 2013-04-17
+Author: Stuart Ball
+Maintainer: Stuart Ball <stuart.ball@jncc.gov.uk>
+Description: Access to NBN data via its web-services
+License: MIT + file LICENSE
+Depends:
+    RCurl,
+    RJSONIO,
+    foreach,
+    doParallel

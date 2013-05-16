@@ -1,0 +1,46 @@
+\name{getOccurrences}
+\alias{getOccurrences}
+\title{Get occurrences for a given species}
+\usage{
+  getOccurrences(tvks = NULL, datasets = NULL,
+    startYear = NULL, endYear = NULL)
+}
+\arguments{
+  \item{tvks}{a list of TVKs which are strings of 16
+  alphanumeric characters}
+
+  \item{datasets}{a list of dataset keys which are strings
+  of 8 alphanumeric characters}
+
+  \item{startYear}{a 4 digit integer year}
+
+  \item{endYear}{a 4 digit integer year}
+}
+\value{
+  a data.frame of occurence records
+}
+\description{
+  Gets publicly available occurrences from the NBN for a
+  species (or list of species) specified by Taxon Version
+  Keys in the \code{tvks} parameter. You can also specify a
+  (list of) dataset key(s) in the \code{datasets} parameter
+  for the datasets from which you want the data to come
+  (otherwise all publicly available data will be returned)
+  and the earliest and/or latest years for which you want
+  data in the \code{startYear} and \code{endYear}
+  parameters (otherwise occurrences at any date will be
+  returned).
+}
+\examples{
+\dontrun{
+ occ <- getOccurrences(tvks="NBNSYS0000007073", datasets="SGB00001",
+                       startYear="1990", endYear="2010")
+}
+}
+\author{
+  Stuart Ball, JNCC \email{stuart.ball@jncc.gov.uk}
+}
+\seealso{
+  \code{\link{getFeature}}, \code{\link{getTaxon}}
+}
+

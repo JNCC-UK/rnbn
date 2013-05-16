@@ -1,0 +1,44 @@
+\name{runnbnurl}
+\alias{runnbnurl}
+\title{Run the constructed url and get data}
+\usage{
+  runnbnurl(service = NULL, tvks = NULL, datasets = NULL,
+    feature = NULL, startYear = NULL, endYear = NULL)
+}
+\arguments{
+  \item{service}{the service you want to call. One of
+  \code{"obs"} for the taxonObservations service,
+  \code{"feature"} for the features service or
+  \code{"taxon"} for the taxa service. The first letter is
+  sufficient}
+
+  \item{tvks}{a list of TVKs which are strings of 16
+  alphanumeric characters}
+
+  \item{datasets}{a list of dataset keys which are strings
+  of 8 alphanumeric characters}
+
+  \item{feature}{a featureID which is a string of 8
+  alphanumeric characters}
+
+  \item{startYear}{a 4 digit integer year}
+
+  \item{endYear}{a 4 digit integer year}
+}
+\value{
+  a JSON object resulting from the call
+}
+\description{
+  The URL to call a web-service is constructed using
+  makenbnurl() This is run and, hopefully, returns a JSON
+  object
+}
+\examples{
+\dontrun{
+ json <- runnbnurl(service="obs", tvks="NBNSYS0000007073", datasets="SGB00001", startYear="1990", endYear="2010")
+}
+}
+\author{
+  Stuart Ball, JNCC \email{stuart.ball@jncc.gov.uk}
+}
+

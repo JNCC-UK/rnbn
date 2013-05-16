@@ -1,0 +1,71 @@
+\name{gridRef}
+\alias{gridRef}
+\title{Manipulate OSGB or OSNI grid reference string}
+\usage{
+  gridRef(grid = NULL,
+    format = c("sq10km", "sq5km", "tetrad", "sq1km", "sq100m", "sq10m"))
+}
+\arguments{
+  \item{grid}{the grid reference to be manipulated}
+
+  \item{format}{the format you want back. The possibilities
+  are: \code{sq10km}, \code{sq5km}, \code{tetrad},
+  \code{sq1km}, \code{sq100m}, \code{sq10m}}
+}
+\value{
+  a list of class "gridref" with the following contents:
+  \item{grid}{the original grid reference} \item{gfmt}{the
+  grid reference string formatted as requested}
+  \item{system}{the grid reference system, either "OSGB" or
+  "OSNI"} \item{precision}{the precision of the formatted
+  grid reference in metres}
+}
+\description{
+  Extracts grid reference strings at various precisions
+  from the supplied grid reference string - if possible!
+  For example, if you supply a 1km square reference
+  \code{TL2998}, then you could get the 10km square
+  \code{TL29}, but not a 100m square grid reference.
+}
+\note{
+  \bold{Tetrads and 5kms}\cr Tetrads are 2x2km squares and
+  are often used for mapping distributions at a the scale
+  of a county or similar sized local area. They are
+  labelled using the 10km square followed by a single,
+  upper-case letter (since there are 25 tetrads in a 10km
+  square, the letter "O" is not used to avaiod confusion
+  with zero). For example: \code{TL29S}. Letters are used
+  as follows:\cr
+
+  \code{0 +---+---+---+---+---+}\cr \code{. | E | J | P | U
+  | Z |}\cr \code{8 +---+---+---+---+---+}\cr \code{. | D |
+  I | N | T | Y |}\cr \code{6 +---+---+---+---+---+}\cr
+  \code{. | C | H | M | S | X |}\cr \code{4
+  +---+---+---+---+---+}\cr \code{. | B | G | L | R | W
+  |}\cr \code{2 +---+---+---+---+---+}\cr \code{. | A | F |
+  K | Q | V |}\cr \code{0 +---+---+---+---+---+}\cr
+  \code{..0...2...4...6...8...0}\cr
+
+  This is named the DINTY system after the letters in the
+  second row of this table.\cr
+
+  5x5km squares (sometimes called "pentads") are used for
+  mapping at a regional scale. They are labelled using the
+  name of the 10km square followed by two upper-case
+  letters as follows:\cr
+
+  \code{ 0 +----+----+}\cr \code{ . | NW | NE |}\cr \code{
+  5 +----+----+}\cr \code{ . | SW | SE |}\cr \code{ 0
+  +----+----+}\cr \code{ ..0....5....0}\cr
+}
+\examples{
+gridRef("TL2998", "sq10km") # Returns TL29
+gridRef("TL29", "sq1km") # Returns NULL - you cannot get a 1km from a 10km!
+}
+\author{
+  Stuart Ball, JNCC \email{stuart.ball@jncc.gov.uk}
+}
+\seealso{
+  \code{\link{gridCoords}}
+}
+
