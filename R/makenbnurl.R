@@ -16,13 +16,14 @@
 #' @export
 #' @param service the service you want to call. One of \code{"obs"} for the 
 #'   taxonObservations service, \code{"feature"} for the features service or 
-#'   \code{"taxon"} for the taxa service. The first letter is sufficient
+#'   \code{"taxon"} for the taxa service. 
 #' @param tvks a list of TVKs which are strings of 16 alphanumeric characters
 #' @param datasets a list of dataset keys which are strings of 8 alphanumeric 
 #'   characters
 #' @param feature a featureID an integer number
 #' @param startYear a 4 digit year
 #' @param endYear a 4 digit year
+#' @param list one of: 'groups', 'datasets', 'providers'...
 #' @return the URL to call - a character string
 #' @author Stuart Ball, JNCC \email{stuart.ball@@jncc.gov.uk}
 #' @examples
@@ -33,7 +34,7 @@
 #' makenbnurl(service="taxon", tvks="NBNSYS0000007073")
 #' 
 makenbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
-                    startYear=NULL, endYear=NULL) {
+                    startYear=NULL, endYear=NULL, list=NULL, VC=NULL, group=NULL) {
 
     ##----------------------------------------------------------------------
     ## function to check that parameters are correctly formatted
@@ -82,6 +83,9 @@ makenbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
             ## datasets (can be a list), startYear and endYear are optional
             o ={
                 url <- paste(url, "taxonObservations?", sep="")
+                if (is.character(group)) {
+                    tvks <- getGroupSpeciesTVKs(group)    
+                    }                    
                 if (is.character(tvks)) {
                     if (checkID(tvks, list=TRUE, len=16)) {
                         url <- paste(url, "ptvk=", paste(unlist(tvks), collapse="&ptvk="), sep="")
@@ -115,6 +119,10 @@ makenbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
                         stop("endYear parameter is incorrect")
                     }
                 }
+                if (!is.null(VC)) {
+                    if(is.character(VC)) VCID <- getVCid(VC)
+                    url <- paste(url, "&featureID=", VCID, sep="") 
+                }
             },
                
             ## details for a feature -------------------------------------
@@ -145,7 +153,32 @@ makenbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
                 } else {
                     stop("tvks parameter is required")
                 }
-        }, 
+            },
+               
+           ## details for ancestry (taxonomy) ---------------------------------------
+           ## MUST have single value in tvks
+           a = {
+               url <- paste(url, "taxa/", sep="")
+               if (is.character(tvks)) {
+                   if (checkID(tvks, list=FALSE, len=16)) {
+                       url <- paste(url, paste(tvks,'/taxonomy',sep=''), sep='')    
+                   } else {
+                       stop("tvks parameter is incorrect")    
+                   }
+               } else {
+                   stop("tvks parameter is required")
+               }
+           },
+               
+           ## details for reference lists ---------------------------------------
+           l = {
+               url <- paste(url, list, sep="")
+           },
+           
+           ## details of species in a given group -------------------------------
+           s = {
+               url <- paste(url, 'taxa?&taxonOutputGroupKey=', group, sep="")
+           },
         stop("service not recognised")) ## end of switch
     ## no value given for service
     } else {

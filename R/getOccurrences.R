@@ -23,11 +23,13 @@
 #' }
 #' 
 getOccurrences <- function(tvks=NULL, datasets=NULL, startYear=NULL, 
-                           endYear=NULL) {
+                           endYear=NULL, VC=NULL, group=NULL) {
+    
+    if(!is.null(tvks) & !is.null(group)) stop('group and tvks cannot be used at the same time')
     
     ## return a JSON object (list of lists)
     json <- runnbnurl(service="obs", tvks=tvks, datasets=datasets, 
-                      startYear=startYear, endYear=endYear) 
+                      startYear=startYear, endYear=endYear, VC=VC, group=group) 
     
     if (length(json) > 0) {
         ## find the unique names that are used in occ

@@ -15,6 +15,7 @@
 #' @param feature a featureID which is a string of 8 alphanumeric characters
 #' @param startYear a 4 digit integer year
 #' @param endYear a 4 digit integer year
+#' @param list one of: 'groups', 'datasets', 'providers'...
 #' @return a JSON object resulting from the call
 #' @author Stuart Ball, JNCC \email{stuart.ball@@jncc.gov.uk}
 #' @examples \dontrun{ 
@@ -22,13 +23,16 @@
 #' }
 #' 
 runnbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
-                       startYear=NULL, endYear=NULL) {
+                       startYear=NULL, endYear=NULL, list=NULL, VC=NULL, group=NULL) {
     
-    url <- makenbnurl(service, tvks, datasets, feature, startYear, endYear)
-    if (url.exists(url)) {
+    url <- makenbnurl(service=service, tvks=tvks, datasets=datasets, feature=feature,
+                      startYear=startYear, endYear=endYear, list=list, VC=VC,
+                      group=group)
+       
+    #if (url.exists(url)) { #this may slow down the function
         resp <- getURL(url)
         return(fromJSON(resp, asText=TRUE))
-    } else {
-        stop("url not found")
-    }
+    #} else {
+    #    stop("url not found")
+    #}
 }
