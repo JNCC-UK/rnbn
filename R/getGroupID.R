@@ -1,3 +1,9 @@
+# Get group ID using group name
+# 
+# Given the name of a group in the NBN (e.g. 'reptile'), return its ID key.
+# The ID key can then be used in searchs and filters
+# This is currently an internal function
+
 getGroupID<-function(name){
     
     if(class(name) != 'character'){

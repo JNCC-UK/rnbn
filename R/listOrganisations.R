@@ -1,25 +1,21 @@
-#' Get group definitions
+#' Get organisation definitions
 #' 
-#' Gives a dataframe of the provider definitions from the NBN Gateway for reference.
+#' Gives a dataframe of the organisation definitions from the NBN Gateway for reference.
 #' 
 #' @export
-#' @return A dataframe containing the definitions of providers on the NBN Gateway, 
+#' @return A dataframe containing the definitions of organisations on the NBN Gateway, 
 #'         including their web address where available
 #' @author Stuart Ball, JNCC \email{stuart.ball@@jncc.gov.uk}
 #' @seealso \code{\link{getFeature}}, \code{\link{getOccurrences}}
 #' @examples \dontrun{ 
-#'  t <- listProviders()
+#'  t <- listOrganisations()
 #' }
 
-listProviders <- function() {
+listOrganisations <- function() {
     
     ## return a JSON object (list of lists)
-    json <- runnbnurl(service="list",list='taxonObservations/providers')
-        
-    for(i in 1:length(json)){
-        json[[i]]<-json[[i]]$organisation
-    }
-    
+    json <- runnbnurl(service="list",list='organisations')
+     
     if (length(json) > 0) {
         ## find the unique names that are used in occ
         n <- unique(unlist(c(sapply(json, names))))
@@ -41,7 +37,12 @@ listProviders <- function() {
         if ("absence" %in% colnames(d)) {
             d <- d[which(d$absence == FALSE),]
         }
+        
+        # Order returned dataframe by name
+        d<-d[with(d, order(d$name)),]
+        
         return(d[c('name','id','website')])
+        
     } else {
         return(NULL)
     }

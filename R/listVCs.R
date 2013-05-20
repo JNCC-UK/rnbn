@@ -1,9 +1,9 @@
-#' Get vicecounties
+#' Get list of vice-counties
 #' 
-#' Gives a dataframe of the Watsonian vicecounties and their keys for reference.
+#' Gives a dataframe of the Watsonian vice-counties and their keys for reference.
 #' 
 #' @export
-#' @return A dataframe containing the name and featureID of each vicecounty.
+#' @return A dataframe containing the name and featureID of each vice-county.
 #' @author Stuart Ball, JNCC \email{stuart.ball@@jncc.gov.uk}
 #' @seealso \code{\link{getFeature}}, \code{\link{getOccurrences}}
 #' @examples \dontrun{ 

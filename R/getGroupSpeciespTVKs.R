@@ -1,8 +1,23 @@
+#' Gets TVKs for a group
+#' 
+#' Given the name of a group (see \code{\link{listGroups}}) this function returns the pTVKs 
+#' (preferred taxon version keys) for all members of that group. This is currently restricted
+#' to returning up to 20 results.
+#' 
+#' @export
+#' @param name A string for a group on the NBN gateway (e.g. 'reptile')
+#' @return A vector of TVKs as characters.
+#' @author Stuart Ball, JNCC \email{stuart.ball@@jncc.gov.uk}
+#' @seealso \code{\link{getFeature}}, \code{\link{getOccurrences}}
+#' @examples \dontrun{ 
+#'  t <- getGroupSpeciesTVKs('reptile')
+#' }
+#' 
 getGroupSpeciesTVKs<-function(name){
     
     groupID<-getGroupID(name)
     
-    json <- runnbnurl(service="list", list=paste('taxa?&taxonOutputGroupKey=', groupID,sep=''))
+    json <- runnbnurl(service="species", group=groupID)
     
     json<-json$results
     

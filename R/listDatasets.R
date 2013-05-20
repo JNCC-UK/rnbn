@@ -1,4 +1,4 @@
-#' Get group definitions
+#' Get Dataset definitions
 #' 
 #' Gives a dataframe of the datasets available from the NBN Gateway for reference.
 #' 
@@ -13,12 +13,8 @@
 listDatasets <- function() {
     
     ## return a JSON object (list of lists)
-    json <- runnbnurl(service="list",list='taxonObservations/datasets')
-    
-    for(i in 1:length(json)){
-        json[[i]]<-json[[i]]$taxonDataset
-    }
-    
+    json <- runnbnurl(service="list",list='datasets')
+        
     if (length(json) > 0) {
         ## find the unique names that are used in occ
         n <- unique(unlist(c(sapply(json, names))))
@@ -40,7 +36,16 @@ listDatasets <- function() {
         if ("absence" %in% colnames(d)) {
             d <- d[which(d$absence == FALSE),]
         }
+        
+        # remove html syntax
+        d$title <- gsub('<i>','',d$title)
+        d$title <- gsub('</i>','',d$title)        
+        
+        # Order returned dataframe by title
+        d<-d[with(d, order(d$title)),]
+        
         return(d[c('title','key')])
+        
     } else {
         return(NULL)
     }

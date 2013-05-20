@@ -5,25 +5,31 @@
 #' Parameters can be added, depending on the service called. \cr\cr
 #' The following services are available at the time of writing: \cr
 #' \code{taxonObservations?ptvk=<tvk>&datasetKey=<dataset>&startYear=<year> 
-#' &endYear=<year>} - get observations for the given (list of) Taxon Version 
-#' Keys (TVKs) for the given (list of) dataset keys optionally with dates 
-#' between startYear and endYear. If no dataset keys are given then all 
+#' &endYear=<year>&featureID=<feature>} - get observations for the given
+#' (list of) Taxon Version Keys (TVKs) for the given (list of) dataset keys
+#' optionally with dates between startYear and endYear and within the spatial
+#' feature, featureID (e.g. a vice-county). If no dataset keys are given then all 
 #' publically available data for the taxa will be returned \cr\cr
 #' \code{features/<featureID>} - get details about a particular location given
 #' its <featureID> \cr\cr
-#' \code{taxa/<tvk>} - get details about a taxon  given its <tvk>
+#' \code{taxa/<tvk>} - get details about a taxon given its <tvk>
 #' 
 #' @export
 #' @param service the service you want to call. One of \code{"obs"} for the 
-#'   taxonObservations service, \code{"feature"} for the features service or 
-#'   \code{"taxon"} for the taxa service. 
+#'   taxonObservations service, \code{"feature"} for the features service, 
+#'   \code{"taxon"} for the taxa service, \code{"list"} for listing services,
+#'   \code{"ancestry"} for taxonomy service and \code{"species"} for the 
+#'   species service.
 #' @param tvks a list of TVKs which are strings of 16 alphanumeric characters
 #' @param datasets a list of dataset keys which are strings of 8 alphanumeric 
 #'   characters
 #' @param feature a featureID an integer number
 #' @param startYear a 4 digit year
 #' @param endYear a 4 digit year
-#' @param list one of: 'groups', 'datasets', 'providers'...
+#' @param list url segment as a string as required to append to the base url to 
+#'        give the list required as a part of the \code{"list"} service 
+#' @param VC a string giving a vice-county name (see \code{\link{listVCs}})
+#' @param group a string giving the name of a group (see \code{\link{listGroups}})
 #' @return the URL to call - a character string
 #' @author Stuart Ball, JNCC \email{stuart.ball@@jncc.gov.uk}
 #' @examples

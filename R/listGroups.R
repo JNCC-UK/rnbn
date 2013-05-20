@@ -36,7 +36,12 @@ listGroups <- function() {
         if ("absence" %in% colnames(d)) {
             d <- d[which(d$absence == FALSE),]
         }
+        
+        # Order returned dataframe by name
+        d<-d[with(d, order(d$name)),]
+        
         return(d[c('name','key')])
+        
     } else {
         return(NULL)
     }

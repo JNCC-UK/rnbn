@@ -7,15 +7,20 @@
 #' @import RCurl
 #' @import RJSONIO
 #' @param service the service you want to call. One of \code{"obs"} for the 
-#'   taxonObservations service, \code{"feature"} for the features service or 
-#'   \code{"taxon"} for the taxa service. The first letter is sufficient
+#'   taxonObservations service, \code{"feature"} for the features service, 
+#'   \code{"taxon"} for the taxa service, \code{"list"} for listing services,
+#'   \code{"ancestry"} for taxonomy service and \code{"species"} for the 
+#'   species service. The first letter is sufficient
 #' @param tvks a list of TVKs which are strings of 16 alphanumeric characters
 #' @param datasets a list of dataset keys which are strings of 8 alphanumeric 
 #'   characters
 #' @param feature a featureID which is a string of 8 alphanumeric characters
 #' @param startYear a 4 digit integer year
 #' @param endYear a 4 digit integer year
-#' @param list one of: 'groups', 'datasets', 'providers'...
+#' @param list url segment as a string as required to append to the base url to 
+#'        give the list required as a part of the \code{"list"} service.
+#' @param VC a string giving a vice-county name (see \code{\link{listVCs}})
+#' @param group a string giving the name of a group (see \code{\link{listGroups}})
 #' @return a JSON object resulting from the call
 #' @author Stuart Ball, JNCC \email{stuart.ball@@jncc.gov.uk}
 #' @examples \dontrun{ 

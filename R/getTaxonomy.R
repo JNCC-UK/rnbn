@@ -10,7 +10,7 @@
 #' @author Stuart Ball, JNCC \email{stuart.ball@@jncc.gov.uk}
 #' @seealso \code{\link{getFeature}}, \code{\link{getOccurrences}}
 #' @examples \dontrun{ 
-#'  t <- getTaxonomy("NBNSYS0000007094")
+#'  t <- getTaxonomy("NHMSYS0000528028") # Myotis daubentonii (Daubenton's Bat)
 #' }
 
 getTaxonomy <- function(tvks=NULL) {

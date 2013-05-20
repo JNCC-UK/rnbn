@@ -1,3 +1,9 @@
+# Get vice-county (VC) ID using VC name
+#
+# Given the name of a VC in the NBN (e.g. 'cambridgeshire'), return its ID key.
+# The ID key can then be used in searchs and filters.
+# This is currently an internal function
+
 getVCid<-function(name){
     
     if(class(name) != 'character'){
