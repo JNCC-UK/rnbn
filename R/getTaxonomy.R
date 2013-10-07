@@ -7,7 +7,7 @@
 #' @export
 #' @param tvks A Taxon Version Key (TVK) which is a 16-character string ID
 #' @return A dataframe containing the JSON object returned by the NBN Gateway.
-#' @author Stuart Ball, JNCC \email{stuart.ball@@jncc.gov.uk}
+#' @author Tom August, CEH \email{tom.august@@ceh.ac.uk}
 #' @seealso \code{\link{getFeature}}, \code{\link{getOccurrences}}
 #' @examples \dontrun{ 
 #'  t <- getTaxonomy("NHMSYS0000528028") # Myotis daubentonii (Daubenton's Bat)

@@ -7,8 +7,4 @@ Author: Stuart Ball
 Maintainer: Stuart Ball <stuart.ball@jncc.gov.uk>
 Description: Access to NBN data via its web-services
 License: MIT + file LICENSE
-Depends:
-    RCurl,
-    RJSONIO,
-    foreach,
-    doParallel
+Depends: RCurl, RJSONIO, foreach, doParallel, tcltk, digest

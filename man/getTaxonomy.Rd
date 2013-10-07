@@ -24,7 +24,7 @@
 }
 }
 \author{
-  Stuart Ball, JNCC \email{stuart.ball@jncc.gov.uk}
+  Tom August, CEH \email{tom.august@ceh.ac.uk}
 }
 \seealso{
   \code{\link{getFeature}}, \code{\link{getOccurrences}}

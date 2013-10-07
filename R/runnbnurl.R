@@ -33,7 +33,15 @@ runnbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
     url <- makenbnurl(service=service, tvks=tvks, datasets=datasets, feature=feature,
                       startYear=startYear, endYear=endYear, list=list, VC=VC,
                       group=group)
-       
+    #print(url)  
+    
+    # Set SSL certs globally, if not done then RCurl will not accept the NBN certificate
+    options(RCurlOptions = list(cainfo = system.file("CurlSSL", "cacert.pem", package = "RCurl")))
+    
+    # Run login script, this checks whether the user has a cookie that the webservice 
+    # knows and if not gets them to log in and stores the cookies
+    nbnLogin()
+    
     #if (url.exists(url)) { #this may slow down the function
         resp <- getURL(url)
         return(fromJSON(resp, asText=TRUE))

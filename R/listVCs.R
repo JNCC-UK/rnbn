@@ -36,7 +36,7 @@ listVCs <- function() {
         if ("absence" %in% colnames(d)) {
             d <- d[which(d$absence == FALSE),]
         }
-        return(d[c('name','identifier')])
+        return(d[c('name','identifier','featureID')])
     } else {
         return(NULL)
     }
