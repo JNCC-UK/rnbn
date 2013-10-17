@@ -47,7 +47,7 @@
                        startYear="1990", endYear="2010")
 
  occ <- getOccurrences(group="quillwort", startYear="1990", endYear="2010",
-                       VC="Dorset")
+                       VC="Shetland (Zetland)")
 }
 }
 \author{

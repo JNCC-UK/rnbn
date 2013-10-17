@@ -27,20 +27,37 @@ information from the NBN Gateway. The functions fall into three tiers:
   \item[Low level functions] to prepare the ground
   \begin{description}
     \item [makenbnurl] constructs a URL to call a service from the supplied
-    parameters (and check they are correct!)
+    parameters (and check they are correct!).
+    \item [nbnLogin] uses dialog boxes to allow the user to enter username and
+    password for the NBN gateway. This function also manages cookies.run the URL
+    and return the JSON object obtained in response
     \item [runnbnurl] run the URL and return the JSON object obtained in response
-    to the web-service call in the form of an R list structure
+    to the web-service call in the form of an R list structure.
   \end{description}
+    
   \item[Functions that access a particular service] and return a JSON object
   \begin{description}
+      \item[getFeature] get information about a "feature" (a location at which
+      occurrences have been recorded) given its featureID.
+      \item[getGroupSpeciesTVKs] given the name of a group (see \texttt{listGroups})
+      this function returns the pTVKs (preferred taxon version keys) for all members
+      of that group. This is currently restricted to returning up to 20 results..
       \item[getOccurrences] get occurrences for a particular taxon or list of
       taxa. Returns a data.frame containing the occurrences. Optionally, the
       datasets from which observations are to be extracted and a start and end
       year can also be specified.
       \item[getTaxon] get information about a particular taxon given its Taxon
       Version Key (TVK).
-      \item[getFeature] get information about a "feature" (a location at which
-      occurrences have been recorded) given its featureID.
+      \item[getTaxonomy] given its TVK, get details of the taxonomical heirarchy
+      of a taxon.
+      \item[listDatasets] returns a dataframe of the datasets available from the
+      NBN Gateway for reference.
+      \item[listGroups] returns a dataframe of the group definitions from the
+      NBN Gateway for reference.
+      \item[listOrganisations] returns a dataframe of the organisation definitions
+      from the NBN Gateway for reference.
+      \item[listVCs] returns a dataframe of the Watsonian vice-counties and their
+      keys for reference.      
   \end{description}
   \item[High levels functions] that manipulate the returned data for
   a particular purpose
@@ -86,27 +103,22 @@ TVKs can be found by searching for a species on the NBN Gateway. At the time of
 writing, there is no web-service to do this, although it should be available
 soon. Consequently, this will have to be done manually.
 
-\begin{enumerate}
-\begin{tabular}{ p{0.3\textwidth} m{0.7\textwidth} }
-  \item On the NBN Gateway home page \url{http://data.nbn.org.uk/}, type the
-  name of the species (``Tropidia scita'' in the example) in the ``Search for
-  species or sites'' box and press Return or click the ``search'' button.
-  &
-  \includegraphics[width=0.66\textwidth]{NBN_search.png}
-  \\
-  \item Hopefully, one or more matches will be found. Click the ``Taxonomy and
-  designation information for \ldots'' link.
-  &
-  \includegraphics[width=0.66\textwidth]{NBN_search_result.png}
-  \\
-  \item This will display the ``NBN Taxonomic and Designation Information'' page
-  for the species. The TVK is shown below the name of the species.
-  &
-  \includegraphics[width=0.66\textwidth]{NBN_species_taxonomy.png}
-  \\
-\end{tabular}
-\end{enumerate}
-
+On the NBN Gateway home page \url{http://data.nbn.org.uk/}, type the
+name of the species (``Tropidia scita'' in the example) in the ``Search for
+species or sites'' box and press Return or click the ``search'' button.
+\\[20pt]
+\includegraphics[width=1\textwidth]{NBN_search.png}
+\\[12pt]
+Hopefully, one or more matches will be found. Click the ``Taxonomy and
+designation information for \ldots'' link.
+\\[20pt]
+\includegraphics[width=1\textwidth]{NBN_search_result.png}
+\\[12pt]
+This will display the ``NBN Taxonomic and Designation Information'' page
+for the species. The TVK is shown below the name of the species.
+\\[20pt]
+\includegraphics[width=1\textwidth]{NBN_species_taxonomy.png}
+\\[12pt]
 For example, the following example will get all publicly available observations
 of \emph{Tropidia scita} from all datasets and for any date and lists selected
 columns for the first 10 rows:
@@ -135,28 +147,35 @@ Dataset IDs are 8-character strings of upper-case letters and numbers. Like
 TVKs, at present, you will need to manually look them up from the NBN Gateway 
 web-site as follows:
 
-\begin{enumerate}
-\begin{tabular}{ m{0.3\textwidth} m{0.7\textwidth} }
-  \item On the NBN Gateway home page \url{http://data.nbn.org.uk/}, click the
-  ``Browse Datasets'' button in the menu bar at the top of the page and then
-  click the ``All species datasets'' link.
-  &
-  \includegraphics[width=0.66\textwidth]{NBN_datasets.png}
-  \\
-  \item Find the dataset you are interested in by scrolling through the 
-  alphabetic list of datasets that appears. When you find the one you want,
-  click on its name.
-  &
-  \includegraphics[width=0.66\textwidth]{NBN_datasets_list.png}
-  \\
-  \item This will display a page of metadata about the selected dataset. The
-  dataset key is near the bottom of the first section ``Dataset Details''
-  and just before the ``Dataset Use'' section starts.
-  &
-  \includegraphics[width=0.66\textwidth]{NBN_dataset_details.png}
-  \\
-\end{tabular}
-\end{enumerate}
+On the NBN Gateway home page \url{http://data.nbn.org.uk/}, click the
+``Browse Datasets'' button in the menu bar at the top of the page and then
+click the ``All species datasets'' link.
+\\[20pt]  
+\includegraphics[width=1\textwidth]{NBN_datasets.png}
+\\[12pt]
+Find the dataset you are interested in by scrolling through the 
+alphabetic list of datasets that appears. When you find the one you want,
+click on its name.
+\\[20pt]
+\includegraphics[width=1\textwidth]{NBN_datasets_list.png}
+\\[12pt]
+This will display a page of metadata about the selected dataset. The
+dataset key is near the bottom of the first section ``Dataset Details''
+and just before the ``Dataset Use'' section starts.
+\\[20pt]
+\includegraphics[width=1\textwidth]{NBN_dataset_details.png}
+\\[12pt]
+
+If you do not require the metadata for each dataset, but instead want to look
+up the dataset ID by name you can use the listDataset function which returns the
+datasets currently held on the NBN.
+
+<<>>=
+datasets <- listDatasets()
+
+# Preview some rows with short titles
+head(datasets[45:50,])
+@
 
 The range of dates for which you want to extract data can also be specified 
 using the \texttt{startYear} and/or \texttt{endYear} parameters:
@@ -168,11 +187,11 @@ dt[1:10,c("observationID","pTaxonName","location","startDate","endDate",
           "dateTypekey")]
 @
 
-\section{Getting data for Species Distribution Models and Frescalo}
+\section{Getting data for Species Distribution Models}
 
 \subsection{\texttt{getSDMdata}}
 The function \texttt{getSDMdata} gets the data required to fit a Species 
-Distribution Mode for one or more species from the NBN Gateway. One element
+Distribution Model for one or more species from the NBN Gateway. One element
 required by many
 modelling methods consists of the coordinates of the locations at which a 
 species has been observed. This is often supplied in the form of a CSV file with
@@ -183,29 +202,9 @@ columns. If modelling is being done via an R package such as dismo
 in a matrix or data.frame. These functions assumes that you are fitting a model
 Using coordinates of the National Grid for either GB or Ireland.
 
-\subsection{\texttt{getFrescaloData}}
-Mark Hill's Frescalo method (\cite{Hill2012}) calculates trends in the frequency
-of a species over time. It attempts to correct the frequency with which a
-species has been recorded in a series of time periods using the total amount
-of recording. This is done by identifying the commonest species in a 
-neighbourhood around a given location and then quantifying the recording effort
-in terms of the proportion of the commonest species that were recorded in the
-neighbourhood. The basic assumption is that the more recording, the greater the
-proportion of commoner species that will be discovered. One of the inputs 
-required is a set of observations consisting of unique combinations of location,
-species and time period. \texttt{getFrescaloData} extracts this information from
-observations obtained from the NBN Gateway and writes them to a file in a
-suitable format for Frescalo. Grid squares are used to provide the locations.
-
 \subsection{Specifying species}
-The format of the species parameter is the same for \texttt{getSDMdata},
-and \texttt{getFrescaloData}, i.e. a data frame with columns \texttt{tvk} and
-\texttt{name}. In general, you will probably specify one or a few species for
-\texttt{getSDMdata},
-but a list covering a large number of species for \texttt{getFrescaloData}. This is
-because the Frescalo method corrects for recording effort using the amount of
-recording of common species in the same group. You will therefore need to list
-all the species covered, e.g. all the species in a family. This is most 
+The format of the species parameter is a data frame with columns \texttt{tvk} and
+\texttt{name}. This is most 
 conveniently done as an external file with a line for each TVK. In preparing this
 file, you will also need to consider how the species should be aggregated. There
 may be subspecies or named forms where you wish to combine 
@@ -243,50 +242,6 @@ sp <- read.csv("/path/syrphidae.csv", as.is=TRUE)
 Notice the use of the \texttt{as.is} parameter to prevent strings (in this case,
 both the name of species and the TVK are character strings) from being loaded as
 factors. 
-
-\subsection{Constructing periods for Frescalo}
-Periods are specified as a list with two
-items: \texttt{breakYear} and \texttt{plabel}. 
-
-\texttt{breakYear} should contain a
-list of year numbers starting at the earliest year you want to include and
-finishing with the latest. The number and size of steps is up to you and
-periods do not have to be of equal sizes. 
-
-\texttt{plabel} provides the labels
-which will be used to identify the periods in the output file. The labels
-should be in character format and there should be one less label than the
-number of breaks.
- 
-For example:
-\begin{verbatim}
-periods <- list()
-periods$breakYear <- seq(from=1980, to=2012, by=2)
-periods$plabel <- as.character(seq(from=1980, to=2010, by=2))
-\end{verbatim}
- 
-It is believed to be good practice to choose your break points so that
-roughly equal numbers of observations fall in each period. Since the amount
-of recording (or at least the number of records that have been captured in
-databases!) has tended to increase over time for many recording schemes, this
-implies that the earlier periods will most likely need to be longer than the
-more recent ones.
-
-\subsection{Parallelism}
-If the number of species to be covered is 
-substantial, this function will take some time (many minutes) to run. The way
-that the function works is to find all unique values in the \texttt{name} 
-column of the \texttt{species} parameter, then process each of these separately
-- using the corresponding \texttt{tvk} entry(s) to call 
-\texttt{getOccurrences} and get observations for that species. The
-unique location/species name/period combinations are then extracted and
-appended to the growing output file. This is ``embarrassingly parallel'' and
-scales almost linearly with the number of CPUs available to run it, i.e. a
-dual core machine will take only slightly more than half as long as a single
-core machine. The \texttt{foreach} package \texttt{\%dopar\%} operator is used.
-Therefore you can use any available methods to register a parallel backend
-for \texttt{foreach} before calling this function. If no backend is registered
-and multiple CPUs are detected, they will be used automatically.
 
 \bibliography{refs}
 

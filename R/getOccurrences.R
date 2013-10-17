@@ -27,7 +27,7 @@
 #'                        startYear="1990", endYear="2010")
 #'                        
 #'  occ <- getOccurrences(group="quillwort", startYear="1990", endYear="2010",
-#'                        VC="Dorset")
+#'                        VC="Shetland (Zetland)")
 #' }
 #' 
 getOccurrences <- function(tvks=NULL, datasets=NULL, startYear=NULL, 
@@ -54,12 +54,19 @@ getOccurrences <- function(tvks=NULL, datasets=NULL, startYear=NULL,
                 d[i,k] <- json[[i]][[j]]
             }
         }
+        
         ## cooerce the matrix to a data.frame
         d <- as.data.frame(d)
+        
         ## we are only interested in presences (not absences)
         if ("absence" %in% colnames(d)) {
             d <- d[which(d$absence == FALSE),]
         }
+        
+        ## Format date columns as dates
+        if ("startDate" %in% colnames(d)) d$startDate <- as.Date(d$startDate)
+        if ("endDate" %in% colnames(d)) d$endDate <- as.Date(d$endDate)
+                
         return(d)
     }
 }
