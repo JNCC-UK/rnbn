@@ -69,7 +69,7 @@ makenbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
     ##----------------------------------------------------------------------
     
     ## This is the base url for the NBN web-services as of April 2013
-    baseURL <- "https://staging-data.nbn.org.uk/api/"
+    baseURL <- "https://data.nbn.org.uk/api/"
     url <- baseURL
     
     ## cope with year/feature parameters being given as numbers

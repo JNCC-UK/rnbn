@@ -37,7 +37,7 @@ nbnLogin <- function(){
         password <- UP$password
                 
         # Create login URL
-        urlLogin <- paste("https://staging-data.nbn.org.uk/api/user/login?username=",username,
+        urlLogin <- paste("https://data.nbn.org.uk/api/user/login?username=",username,
                     "&password=", password, sep='')
         
         # Check that login was a success (if not stop)
