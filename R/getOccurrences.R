@@ -40,6 +40,7 @@ getOccurrences <- function(tvks=NULL, datasets=NULL, startYear=NULL,
     
     ## If you have more than 5 TVKs break it up into batches of 5
     # Set up parameters
+    tvks <- unique(tvks)
     nTVK <- length(tvks)
     start <- 1
     d_master <- NULL
