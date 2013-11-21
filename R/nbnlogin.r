@@ -22,7 +22,7 @@ nbnLogin <- function(){
                useragent = agent, followlocation = TRUE, curl=curl)
     
     # See if we are known
-    whoamI <- "http://staging-data.nbn.org.uk/api/user"
+    whoamI <- "https://data.nbn.org.uk/api/user"
     resp <- fromJSON(getURL(whoamI, curl = curl), asText = TRUE) # resp$id == 1 if we are not logged in
     #print(resp)
     
@@ -38,7 +38,7 @@ nbnLogin <- function(){
                 
         # Create login URL
         urlLogin <- paste("https://data.nbn.org.uk/api/user/login?username=",username,
-                    "&password=", password, sep='')
+                    "&password=", password, "&remember=true", sep='')
         
         # Check that login was a success (if not stop)
         resp <- fromJSON(getURL(urlLogin,curl=curl), asText=TRUE) #login result
@@ -46,7 +46,7 @@ nbnLogin <- function(){
             stop('Username and password invalid, have another go')
         } else {
             print('Login successful')
-        }       
+        }
     }
     
     # To write cookies to file we need to remove the curl object and run garbage collection

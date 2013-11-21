@@ -5,3 +5,11 @@ test_that("Check that we get some data back", {
     expect_that(nrow(dt) > 0, is_true()) 
     expect_that(sum(which(dt$absence == TRUE)), equals(0)) ## no absences
 })
+dt <- getOccurrences(names=c('badger','blue tit'), 
+                     startYear="1990", endYear="2010")
+test_that("Check that we get some data back", {
+    expect_that(nrow(dt) > 0, is_true()) 
+    expect_that(sum(which(dt$absence == TRUE)), equals(0)) ## no absences
+    expect_that(NHMSYS0000080191 %in% dt$pTaxonVersionKey, is_true())
+    expect_that(NHMSYS0001688296 %in% dt$pTaxonVersionKey, is_true())
+})

@@ -18,8 +18,8 @@
 #' @param service the service you want to call. One of \code{"obs"} for the 
 #'   taxonObservations service, \code{"feature"} for the features service, 
 #'   \code{"taxon"} for the taxa service, \code{"list"} for listing services,
-#'   \code{"ancestry"} for taxonomy service and \code{"species"} for the 
-#'   species service.
+#'   \code{"ancestry"} for taxonomy service, \code{"species"} for the 
+#'   species service and \code{"query"} for the search service.
 #' @param tvks a list of TVKs which are strings of 16 alphanumeric characters
 #' @param datasets a list of dataset keys which are strings of 8 alphanumeric 
 #'   characters
@@ -40,7 +40,8 @@
 #' makenbnurl(service="taxon", tvks="NBNSYS0000007073")
 #' 
 makenbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
-                    startYear=NULL, endYear=NULL, list=NULL, VC=NULL, group=NULL) {
+                       startYear=NULL, endYear=NULL, list=NULL, VC=NULL, group=NULL,
+                       query=NULL) {
 
     ##----------------------------------------------------------------------
     ## function to check that parameters are correctly formatted
@@ -183,12 +184,19 @@ makenbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
            
            ## details of species in a given group -------------------------------
            s = {
-               url <- paste(url, 'taxa?&taxonOutputGroupKey=', group, sep="")
+               url <- paste(url, 'taxa?&taxonOutputGroupKey=', group, '&rows=5000', sep="")
+           },
+               
+           ## details of taxa matching a search -------------------------------
+           q = {
+               url <- paste(url, 'search/taxa?q=', query, sep="")
            },
         stop("service not recognised")) ## end of switch
+        
     ## no value given for service
     } else {
         stop("no service specified")    
     }
-    url  ## return value
+    
+    return(url)  ## return value
 }

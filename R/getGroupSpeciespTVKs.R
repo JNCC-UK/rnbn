@@ -2,7 +2,7 @@
 #' 
 #' Given the name of a group (see \code{\link{listGroups}}) this function returns the pTVKs 
 #' (preferred taxon version keys) for all members of that group. This is currently restricted
-#' to returning up to 20 results.
+#' to returning up to 5000 results.
 #' 
 #' @export
 #' @param name A string for a group on the NBN gateway (e.g. 'reptile')

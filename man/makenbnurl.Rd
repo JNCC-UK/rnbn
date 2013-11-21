@@ -4,15 +4,16 @@
 \usage{
   makenbnurl(service = NULL, tvks = NULL, datasets = NULL,
     feature = NULL, startYear = NULL, endYear = NULL,
-    list = NULL, VC = NULL, group = NULL)
+    list = NULL, VC = NULL, group = NULL, query = NULL)
 }
 \arguments{
   \item{service}{the service you want to call. One of
   \code{"obs"} for the taxonObservations service,
   \code{"feature"} for the features service, \code{"taxon"}
   for the taxa service, \code{"list"} for listing services,
-  \code{"ancestry"} for taxonomy service and
-  \code{"species"} for the species service.}
+  \code{"ancestry"} for taxonomy service, \code{"species"}
+  for the species service and \code{"query"} for the search
+  service.}
 
   \item{tvks}{a list of TVKs which are strings of 16
   alphanumeric characters}

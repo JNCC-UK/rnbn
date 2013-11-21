@@ -10,7 +10,7 @@ getLogin <- function(){
     # Open a dialogue box to get password
     password <- modalDialog("Password", "Enter Your Password", "")
     if (password == "ID_CANCEL") stop('You must log in to use rbn. Visit https://staging-data.nbn.org.uk/User/Register to register')
-    
+            
     # Encrypt password using MD5 hash ### CURRENTLY NOT FUNCTIONING
     #password <- digest(password)
     

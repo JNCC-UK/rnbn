@@ -28,11 +28,12 @@
 #' }
 #' 
 runnbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
-                       startYear=NULL, endYear=NULL, list=NULL, VC=NULL, group=NULL) {
+                      startYear=NULL, endYear=NULL, list=NULL, VC=NULL, group=NULL,
+                      query=NULL) {
     
     url <- makenbnurl(service=service, tvks=tvks, datasets=datasets, feature=feature,
                       startYear=startYear, endYear=endYear, list=list, VC=VC,
-                      group=group)
+                      group=group, query=query)
     #print(url)  
     
     # Set SSL certs globally, if not done then RCurl will not accept the NBN certificate
@@ -41,10 +42,19 @@ runnbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
     # Run login script, this checks whether the user has a cookie that the webservice 
     # knows and if not gets them to log in and stores the cookies
     nbnLogin()
+        
+    # set up Curl
+    agent = "rnbn v0.1"
+    curl = getCurlHandle()
+    cookiePath<-paste(.Library,'rnbn/cookies',sep='/')
+    cookies <- paste(cookiePath, 'cookies.txt', sep = '/')
+    curlSetOpt(cookiefile = cookies, cookiejar = cookies,
+               useragent = agent, followlocation = TRUE, curl=curl)
     
-    #if (url.exists(url)) { #this may slow down the function
-        resp <- getURL(url)
-        return(fromJSON(resp, asText=TRUE))
+    #if (url.exists(url)) { #this may slow down the function (not sure it works either)
+    #print(url)    
+    resp <- getURL(url, curl = curl)
+    return(fromJSON(resp, asText=TRUE))
     #} else {
     #    stop("url not found")
     #}
