@@ -11,13 +11,10 @@ nbnLogin <- function(){
     
     library(tcltk)
     
-    # set up file path where cookies are saved
-    cookiePath<-paste(.Library,'rnbn/cookies',sep='/')
-    
     # set up Curl
     agent = "rnbn v0.1"
     curl = getCurlHandle()
-    cookies <- paste(cookiePath, 'cookies.txt', sep = '/')
+    cookies <- 'cookies.txt'
     curlSetOpt(cookiefile = cookies, cookiejar = cookies,
                useragent = agent, followlocation = TRUE, curl=curl)
     
@@ -29,7 +26,7 @@ nbnLogin <- function(){
     if(resp['id'] == 1){
         
         # Create the directory for cookies
-        dir.create(cookiePath, showWarnings = FALSE)
+        #dir.create(cookiePath, showWarnings = FALSE)
               
         # Get username and password
         UP <- getLogin()
@@ -38,7 +35,7 @@ nbnLogin <- function(){
                 
         # Create login URL
         urlLogin <- paste("https://data.nbn.org.uk/api/user/login?username=",username,
-                    "&password=", password, "&remember=true", sep='')
+                    "&password=", password, sep='')
         
         # Check that login was a success (if not stop)
         resp <- fromJSON(getURL(urlLogin,curl=curl), asText=TRUE) #login result

@@ -46,8 +46,9 @@ runnbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
     # set up Curl
     agent = "rnbn v0.1"
     curl = getCurlHandle()
-    cookiePath<-paste(.Library,'rnbn/cookies',sep='/')
-    cookies <- paste(cookiePath, 'cookies.txt', sep = '/')
+    #cookiePath<-'~/rnbn'
+    #cookies <- paste(cookiePath, 'cookies.txt', sep = '/')
+    cookies <- 'cookies.txt'
     curlSetOpt(cookiefile = cookies, cookiejar = cookies,
                useragent = agent, followlocation = TRUE, curl=curl)
     
