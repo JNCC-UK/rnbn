@@ -10,6 +10,7 @@ Functions added:
 -getTaxonomy()
 -getGroupID()
 -getVCid()
--getGroupSpeciespTVKs
+-getGroupSpeciespTVKs()
+-getTVKQuery()
 
 getOccurrence (and makenbnurl) adapted to accept featureID and group arguements
