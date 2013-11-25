@@ -37,6 +37,8 @@
 
   \item{group}{a string giving the name of a group (see
   \code{\link{listGroups}})}
+
+  \item{query}{a string used to perform a taxa search}
 }
 \value{
   a JSON object resulting from the call

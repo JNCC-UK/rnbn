@@ -21,6 +21,7 @@
 #'        give the list required as a part of the \code{"list"} service.
 #' @param VC a string giving a vice-county name (see \code{\link{listVCs}})
 #' @param group a string giving the name of a group (see \code{\link{listGroups}})
+#' @param query a string used to perform a taxa search
 #' @return a JSON object resulting from the call
 #' @author Stuart Ball, JNCC \email{stuart.ball@@jncc.gov.uk}
 #' @examples \dontrun{ 

@@ -30,6 +30,7 @@
 #'        give the list required as a part of the \code{"list"} service 
 #' @param VC a string giving a vice-county name (see \code{\link{listVCs}})
 #' @param group a string giving the name of a group (see \code{\link{listGroups}})
+#' @param query a string used to search for taxa
 #' @return the URL to call - a character string
 #' @author Stuart Ball, JNCC \email{stuart.ball@@jncc.gov.uk}
 #' @examples

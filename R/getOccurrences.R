@@ -34,7 +34,7 @@
 #' }
 #' 
 getOccurrences <- function(tvks=NULL, datasets=NULL, startYear=NULL, 
-                           endYear=NULL, VC=NULL, group=NULL, ...) {
+                           endYear=NULL, VC=NULL, group=NULL) {
     
     if(!is.null(tvks) & !is.null(group)) stop('group and tvks cannot be used at the same time')
     

@@ -6,7 +6,7 @@
     rec_only = FALSE, top = FALSE)
 }
 \arguments{
-  \item{q}{A query string. This can range from latin
+  \item{query}{A query string. This can range from latin
   binomials to partial english names.}
 
   \item{species_only}{Logical, if \code{TRUE} pTVKs of
@@ -39,7 +39,7 @@
   Tom August, CEH \email{tomaug@ceh.ac.uk}
 }
 \seealso{
-  \code{\link{getGroupSpeciespTVKs}},
+  \code{\link{getGroupSpeciesTVKs}},
   \code{\link{getOccurrences}}
 }
 

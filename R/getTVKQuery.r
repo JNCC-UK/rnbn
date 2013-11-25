@@ -4,7 +4,7 @@
 #' that match that search on the NBN. 
 #' 
 #' @export
-#' @param q A query string. This can range from latin binomials to partial english names.
+#' @param query A query string. This can range from latin binomials to partial english names.
 #' @param species_only Logical, if \code{TRUE} pTVKs of species are returned (i.e.
 #' sub-species and aggregates are removed). Defaults to \code{TRUE}
 #' @param rec_only Logical, if \code{TRUE} pTVKs of recommended names are returned (i.e.
@@ -15,7 +15,7 @@
 #' care!
 #' @return A vector of TVKs as characters.
 #' @author Tom August, CEH \email{tomaug@@ceh.ac.uk}
-#' @seealso \code{\link{getGroupSpeciespTVKs}}, \code{\link{getOccurrences}}
+#' @seealso \code{\link{getGroupSpeciesTVKs}}, \code{\link{getOccurrences}}
 #' @examples \dontrun{ 
 #'  t <- getTVKQuery('blue tit')
 #' }

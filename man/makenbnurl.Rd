@@ -36,6 +36,8 @@
 
   \item{group}{a string giving the name of a group (see
   \code{\link{listGroups}})}
+
+  \item{query}{a string used to search for taxa}
 }
 \value{
   the URL to call - a character string

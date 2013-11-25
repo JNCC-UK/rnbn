@@ -4,7 +4,7 @@
 \usage{
   getOccurrences(tvks = NULL, datasets = NULL,
     startYear = NULL, endYear = NULL, VC = NULL,
-    group = NULL, ...)
+    group = NULL)
 }
 \arguments{
   \item{tvks}{a list of TVKs which are strings of 16

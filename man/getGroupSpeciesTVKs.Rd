@@ -26,6 +26,7 @@
   Stuart Ball, JNCC \email{stuart.ball@jncc.gov.uk}
 }
 \seealso{
-  \code{\link{getFeature}}, \code{\link{getOccurrences}}
+  \code{\link{getFeature}}, \code{\link{getOccurrences}},
+  \code{\link{getTVKQuery}}
 }
 
