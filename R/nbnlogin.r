@@ -13,8 +13,9 @@ nbnLogin <- function(){
     
     # set up Curl
     agent = "rnbn v0.1"
+    options(RCurlOptions = list(sslversion=3L, ssl.verifypeer = FALSE))
     curl = getCurlHandle()
-    cookies <- 'cookies.txt'
+    cookies <- 'rnbn_cookies.txt'
     curlSetOpt(cookiefile = cookies, cookiejar = cookies,
                useragent = agent, followlocation = TRUE, curl=curl)
     
