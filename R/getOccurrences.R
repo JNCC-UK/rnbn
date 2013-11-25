@@ -45,7 +45,7 @@ getOccurrences <- function(tvks=NULL, datasets=NULL, startYear=NULL,
     start <- 1
     d_master <- NULL
     
-    while(start < nTVK){
+    while(start <= nTVK){
         
         cat('Requesting batch', ceiling(start/2), 'of', ceiling(nTVK/2),'\n', sep=' ')
         end <- start + 1

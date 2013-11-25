@@ -1,7 +1,7 @@
-context("Test getOccurrences")
+context("Test getTVKQuery")
 dt <- getTVKQuery(query='Badger')
 test_that("query works1", {
-    expect_that(NHMSYS0000080191 %in% dt$ptaxonVersionKey, is_true()) 
+    expect_that('NHMSYS0000080191' %in% dt$ptaxonVersionKey, is_true()) 
 })
 dt <- getTVKQuery(query='myotis')
 test_that("query works2", {
