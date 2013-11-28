@@ -90,10 +90,7 @@ makenbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
             ## MUST have tvks (which can be a list)
             ## datasets (can be a list), startYear and endYear are optional
             o ={
-                url <- paste(url, "taxonObservations?", sep="")
-                if (is.character(group)) {
-                    tvks <- getGroupSpeciesTVKs(group)    
-                    }                    
+                url <- paste(url, "taxonObservations?", sep="")                  
                 if (is.character(tvks)) {
                     if (checkID(tvks, list=TRUE, len=16)) {
                         url <- paste(url, "ptvk=", paste(unlist(tvks), collapse="&ptvk="), sep="")

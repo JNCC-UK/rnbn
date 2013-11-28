@@ -22,22 +22,30 @@
 #' @param endYear a 4 digit integer year
 #' @param VC a string giving a vice-county name (see \code{\link{listVCs}})
 #' @param group a string giving the name of a group (see \code{\link{listGroups}})
+#' @param silent If TRUE batch request information is supressed
 #' @return a data.frame of occurence records
 #' @author Stuart Ball, JNCC \email{stuart.ball@@jncc.gov.uk}
 #' @seealso \code{\link{getFeature}}, \code{\link{getTaxon}}
 #' @examples \dontrun{ 
-#'  occ <- getOccurrences(tvks="NBNSYS0000007073", datasets="SGB00001", 
-#'                        startYear="1990", endYear="2010")
+#'  dt1 <- getOccurrences(tvks="NBNSYS0000002987", datasets="GA000373", 
+#'                        startYear="1990", endYear="1991")
+#'                       
+#'  dt2 <- getOccurrences(tvks=c("NBNSYS0000002987","NHMSYS0001688296","NHMSYS0000080210"),
+#'                        startYear="1990", endYear="1991")
 #'                        
-#'  occ <- getOccurrences(group="quillwort", startYear="1990", endYear="2010",
+#'  dt3 <- getOccurrences(group="quillwort", startYear="1990", endYear="2010",
 #'                        VC="Shetland (Zetland)")
 #' }
 #' 
 getOccurrences <- function(tvks=NULL, datasets=NULL, startYear=NULL, 
-                           endYear=NULL, VC=NULL, group=NULL) {
+                           endYear=NULL, VC=NULL, group=NULL, silent=FALSE) {
     
     if(!is.null(tvks) & !is.null(group)) stop('group and tvks cannot be used at the same time')
+    if(is.null(tvks) & is.null(group)) stop('One of group or tvks must be given')
     
+    # If we are searching by group get the group tvks
+    if(!is.null(group)) tvks <- getGroupSpeciesTVKs(group)
+        
     ## If you have more than 5 TVKs break it up into batches of 5
     # Set up parameters
     tvks <- unique(tvks)
@@ -47,13 +55,13 @@ getOccurrences <- function(tvks=NULL, datasets=NULL, startYear=NULL,
     
     while(start <= nTVK){
         
-        cat('Requesting batch', ceiling(start/2), 'of', ceiling(nTVK/2),'\n', sep=' ')
+        if(!silent) cat('Requesting batch', ceiling(start/2), 'of', ceiling(nTVK/2),'\n', sep=' ')
         end <- start + 1
         temp_tvks <-  na.omit(tvks[start:end])
         
         ## return a JSON object (list of lists)
         json <- runnbnurl(service="obs", tvks=temp_tvks, datasets=datasets, 
-                          startYear=startYear, endYear=endYear, VC=VC, group=group) 
+                          startYear=startYear, endYear=endYear, VC=VC) 
         
         if (length(json) > 0) {
             ## find the unique names that are used in occ

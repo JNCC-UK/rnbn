@@ -13,7 +13,8 @@
 #' @param top Logical, if \code{TRUE} only the top answer is returned. This is what the
 #' gateway thinks you are most likely to be after but may not always be right, use with
 #' care!
-#' @return A vector of TVKs as characters.
+#' @return A dataframe containing information on each taxa entry that match the query 
+#' string in rows.
 #' @author Tom August, CEH \email{tomaug@@ceh.ac.uk}
 #' @seealso \code{\link{getGroupSpeciesTVKs}}, \code{\link{getOccurrences}}
 #' @examples \dontrun{ 
@@ -51,8 +52,9 @@ getTVKQuery<-function(query=NULL, species_only = TRUE, rec_only = FALSE, top = F
             }
             ## cooerce the matrix to a data.frame
             d <- as.data.frame(d, stringsAsFactors = FALSE)
-            # keep only the columns I need
-            d <- d[colnames(d) %in% c('searchMatchTitle','rank','nameStatus','ptaxonVersionKey')]            
+            
+            # On reflection it is probably best to return everything # keep only the columns I need
+            #d <- d[colnames(d) %in% c('searchMatchTitle','rank','nameStatus','ptaxonVersionKey')]            
            
             ## Keep only species if desired
             if(species_only) d <- d[d$rank == 'Species',]

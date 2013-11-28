@@ -24,7 +24,8 @@
   care!}
 }
 \value{
-  A vector of TVKs as characters.
+  A dataframe containing information on each taxa entry
+  that match the query string in rows.
 }
 \description{
   Given a search term this function returns the pTVKs for

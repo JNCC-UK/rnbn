@@ -4,7 +4,7 @@
 \usage{
   getOccurrences(tvks = NULL, datasets = NULL,
     startYear = NULL, endYear = NULL, VC = NULL,
-    group = NULL)
+    group = NULL, silent = FALSE)
 }
 \arguments{
   \item{tvks}{a list of TVKs which are strings of 16
@@ -23,6 +23,9 @@
 
   \item{group}{a string giving the name of a group (see
   \code{\link{listGroups}})}
+
+  \item{silent}{If TRUE batch request information is
+  supressed}
 }
 \value{
   a data.frame of occurence records
@@ -48,10 +51,13 @@
 }
 \examples{
 \dontrun{
- occ <- getOccurrences(tvks="NBNSYS0000007073", datasets="SGB00001",
-                       startYear="1990", endYear="2010")
+ dt1 <- getOccurrences(tvks="NBNSYS0000002987", datasets="GA000373",
+                       startYear="1990", endYear="1991")
 
- occ <- getOccurrences(group="quillwort", startYear="1990", endYear="2010",
+ dt2 <- getOccurrences(tvks=c("NBNSYS0000002987","NHMSYS0001688296","NHMSYS0000080210"),
+                       startYear="1990", endYear="1991")
+
+ dt3 <- getOccurrences(group="quillwort", startYear="1990", endYear="2010",
                        VC="Shetland (Zetland)")
 }
 }
