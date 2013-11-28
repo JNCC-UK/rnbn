@@ -4,7 +4,8 @@
 \usage{
   runnbnurl(service = NULL, tvks = NULL, datasets = NULL,
     feature = NULL, startYear = NULL, endYear = NULL,
-    list = NULL, VC = NULL, group = NULL, query = NULL)
+    list = NULL, VC = NULL, group = NULL, query = NULL,
+    gridRef = NULL)
 }
 \arguments{
   \item{service}{the service you want to call. One of
@@ -39,6 +40,9 @@
   \code{\link{listGroups}})}
 
   \item{query}{a string used to perform a taxa search}
+
+  \item{gridRef}{a string giving a gridreference in which
+  to search for occurrences}
 }
 \value{
   a JSON object resulting from the call

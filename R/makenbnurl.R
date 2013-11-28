@@ -31,6 +31,7 @@
 #' @param VC a string giving a vice-county name (see \code{\link{listVCs}})
 #' @param group a string giving the name of a group (see \code{\link{listGroups}})
 #' @param query a string used to search for taxa
+#' @param gridRef a string giving a gridreference in which to search for occurrences
 #' @return the URL to call - a character string
 #' @author Stuart Ball, JNCC \email{stuart.ball@@jncc.gov.uk}
 #' @examples
@@ -42,7 +43,7 @@
 #' 
 makenbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
                        startYear=NULL, endYear=NULL, list=NULL, VC=NULL, group=NULL,
-                       query=NULL) {
+                       query=NULL, gridRef=NULL) {
 
     ##----------------------------------------------------------------------
     ## function to check that parameters are correctly formatted
@@ -98,7 +99,7 @@ makenbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
                         stop("tvks parameter is incorrect")
                     }
                 } else {
-                    stop("tvks parameter is required")
+                    #stop("tvks parameter is required")
                 }
                 if (is.character(datasets)) {
                     if (checkID(datasets, list=TRUE, len=8)) {
@@ -127,6 +128,9 @@ makenbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
                 if (!is.null(VC)) {
                     if(is.character(VC)) VCID <- getVCid(VC)
                     url <- paste(url, "&featureID=", VCID, sep="") 
+                }
+                if (!is.null(gridRef)) {
+                    url <- paste(url, "&gridRef=", gridRef, sep="") 
                 }
             },
                

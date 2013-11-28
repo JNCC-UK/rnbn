@@ -7,7 +7,7 @@ test_that("Errors given", {
     expect_error(getOccurrences(silent=T), 'Error in getOccurrences*')
 })
 dt <- getOccurrences(tvks="NBNSYS0000002987", datasets="GA000373", 
-                     startYear="1990", endYear="1991", silent = TRUE)
+                     startYear="1990", endYear="1991", acceptTandC=TRUE, silent = TRUE)
 test_that("Check single TVK search", {
     expect_that(nrow(dt) > 0, is_true()) 
     expect_that(sum(which(dt$absence == TRUE)), equals(0)) ## no absences
@@ -18,7 +18,7 @@ test_that("Check single TVK search", {
 })
 rm(dt)
 dt <- getOccurrences(tvks=c("NBNSYS0000002987","NHMSYS0001688296","NHMSYS0000080210"),
-                     startYear="1990", endYear="1991", silent = TRUE)
+                     startYear="1990", endYear="1991", acceptTandC=TRUE, silent = TRUE)
 test_that("Check multi TVK search", {
     expect_that(nrow(dt) > 0, is_true()) 
     expect_that(sum(which(dt$absence == TRUE)), equals(0)) ## no absences
@@ -27,11 +27,20 @@ test_that("Check multi TVK search", {
 })
 rm(dt)
 dt <- getOccurrences(group="quillwort", startYear="1990", endYear="1992",
-                     VC="Shetland (Zetland)", silent = TRUE)
+                     VC="Shetland (Zetland)", acceptTandC=TRUE, silent = TRUE)
 test_that("Check group search", {
     expect_that(nrow(dt) > 0, is_true()) 
     expect_that(sum(which(dt$absence == TRUE)), equals(0)) ## no absences
     expect_that(length(unique(dt$pTaxonVersionKey)), equals(2))
     expect_that(sort(unique(dt$pTaxonVersionKey)), equals(c('NBNSYS0000002008','NBNSYS0000002009')))
+})
+rm(dt)
+dt <- getOccurrences(gridRef='SP00', startYear=2008, acceptTandC=TRUE, silent = TRUE)
+hecs <- unique(do.call(rbind, lapply(dt$location, FUN=gridRef, format='sq10km'))[,3])
+test_that("Check gridRef only search", {
+    expect_that(nrow(dt) > 0, is_true()) 
+    expect_that(sum(which(dt$absence == TRUE)), equals(0)) ## no absences
+    expect_that(length(hecs), equals(1))
+    expect_that(hecs[[1]], equals('SP00'))
 })
 rm(dt)

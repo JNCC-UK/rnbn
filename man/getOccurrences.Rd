@@ -4,7 +4,8 @@
 \usage{
   getOccurrences(tvks = NULL, datasets = NULL,
     startYear = NULL, endYear = NULL, VC = NULL,
-    group = NULL, silent = FALSE)
+    group = NULL, gridRef = NULL, acceptTandC = FALSE,
+    silent = FALSE)
 }
 \arguments{
   \item{tvks}{a list of TVKs which are strings of 16
@@ -24,6 +25,16 @@
   \item{group}{a string giving the name of a group (see
   \code{\link{listGroups}})}
 
+  \item{gridRef}{a string giving a gridreference in which
+  to search for occurrences}
+
+  \item{acceptTandC}{if set to \code{TRUE} you accept the
+  NBN gateway terms and conditions and privacy policy.
+  These can be found at
+  \url{https://data.nbn.org.uk/Terms}. Accepting the terms
+  and conditions supresses the corresponding warning
+  message.}
+
   \item{silent}{If TRUE batch request information is
   supressed}
 }
@@ -33,21 +44,23 @@
 \description{
   Gets publicly available occurrences from the NBN for a
   species (or list of species) specified by Taxon Version
-  Keys in the \code{tvks} parameter. Alternativly a group
-  can be specified to \code{group} as a string, such as
-  'reptile' (see \code{\link{listGroups}}). To get access
-  to data you must first register at
-  https://data.nbn.org.uk/User/Register. You will need your
-  username and password when running this function for the
-  first time. You can also specify a (list of) dataset
-  key(s) in the \code{datasets} parameter for the datasets
-  from which you want the data to come (otherwise all
-  publicly available data will be returned) and the
-  earliest and/or latest years for which you want data in
-  the \code{startYear} and \code{endYear} parameters
-  (otherwise occurrences at any date will be returned). A
-  vice-county can be specified by passing a name to
-  \code{VC} (see \code{\link{listVCs}}).
+  Keys in the \code{tvks} parameter (see
+  \code{\link{getTVKQuery}}). Alternativly a group can be
+  specified to \code{group} as a string, such as 'reptile'
+  (see \code{\link{listGroups}}). To get access to data you
+  must first register at
+  \url{https://data.nbn.org.uk/User/Register}. You will
+  need your username and password when running this
+  function for the first time.\cr You can also specify a
+  (list of) dataset key(s) in the \code{datasets} parameter
+  for the datasets from which you want the data to come
+  (otherwise all publicly available data will be returned)
+  and the earliest and/or latest years for which you want
+  data in the \code{startYear} and \code{endYear}
+  parameters (otherwise occurrences at any date will be
+  returned). A vice-county or grid reference can be
+  specified by passing a name to \code{VC} (see
+  \code{\link{listVCs}}), or \code{gridRef}.
 }
 \examples{
 \dontrun{

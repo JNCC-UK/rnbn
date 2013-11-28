@@ -22,6 +22,7 @@
 #' @param VC a string giving a vice-county name (see \code{\link{listVCs}})
 #' @param group a string giving the name of a group (see \code{\link{listGroups}})
 #' @param query a string used to perform a taxa search
+#' @param gridRef a string giving a gridreference in which to search for occurrences
 #' @return a JSON object resulting from the call
 #' @author Stuart Ball, JNCC \email{stuart.ball@@jncc.gov.uk}
 #' @examples \dontrun{ 
@@ -30,11 +31,11 @@
 #' 
 runnbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
                       startYear=NULL, endYear=NULL, list=NULL, VC=NULL, group=NULL,
-                      query=NULL) {
+                      query=NULL, gridRef=NULL) {
     
     url <- makenbnurl(service=service, tvks=tvks, datasets=datasets, feature=feature,
                       startYear=startYear, endYear=endYear, list=list, VC=VC,
-                      group=group, query=query)
+                      group=group, query=query, gridRef=gridRef)
     #print(url)  
     
     # Set SSL certs globally, if not done then RCurl will not accept the NBN certificate
@@ -55,9 +56,27 @@ runnbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
                useragent = agent, followlocation = TRUE, curl=curl)
     
     #if (url.exists(url)) { #this may slow down the function (not sure it works either)
-    #print(url)    
-    resp <- getURL(url, curl = curl)
+    print(url)  
+    
+    # The server sometimes seems to fail to handshake(?) this is not repeatable and
+    # can be resolved by trying again. Here if it fails I get it to try again 5 times
+    # before reporting an error
+    a=0
+    while(a<5){
+        resp <- try(getURL(url, curl = curl), silent=TRUE)
+        if(is.null(attr(resp,'class'))) attr(resp,'class') <- 'success'
+        #print(attr(resp,'class'))
+        if(attr(resp,'class') == 'try-error'){
+            a=a+1
+            if(a==5) stop('The server is issuing an alert handshake failure, please try again ni a minute')
+        } else {
+            a=999
+        }
+    }
+    
+    attr(resp,'class') <- NULL
     return(fromJSON(resp, asText=TRUE))
+    
     #} else {
     #    stop("url not found")
     #}

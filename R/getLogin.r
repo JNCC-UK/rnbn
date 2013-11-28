@@ -1,7 +1,4 @@
 getLogin <- function(){
-    # Create a "main" window with a button which activates our dialog
-    require(tcltk)
-    require(digest)
     
     # Open a dialogue box to get username
     username <- modalDialog("Username", "Enter Your Username", "")

@@ -4,7 +4,8 @@
 \usage{
   makenbnurl(service = NULL, tvks = NULL, datasets = NULL,
     feature = NULL, startYear = NULL, endYear = NULL,
-    list = NULL, VC = NULL, group = NULL, query = NULL)
+    list = NULL, VC = NULL, group = NULL, query = NULL,
+    gridRef = NULL)
 }
 \arguments{
   \item{service}{the service you want to call. One of
@@ -38,6 +39,9 @@
   \code{\link{listGroups}})}
 
   \item{query}{a string used to search for taxa}
+
+  \item{gridRef}{a string giving a gridreference in which
+  to search for occurrences}
 }
 \value{
   the URL to call - a character string

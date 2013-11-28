@@ -9,8 +9,6 @@
 
 nbnLogin <- function(){
     
-    library(tcltk)
-    
     # set up Curl
     agent = "rnbn v0.1"
     options(RCurlOptions = list(sslversion=3L, ssl.verifypeer = FALSE))
@@ -21,7 +19,22 @@ nbnLogin <- function(){
     
     # See if we are known
     whoamI <- "https://data.nbn.org.uk/api/user"
-    resp <- fromJSON(getURL(whoamI, curl = curl), asText = TRUE) # resp$id == 1 if we are not logged in
+    
+    # sometimes the server fails to handshake, i try to get around this by trying again
+    a=0
+    while(a<5){
+        resp_who <- try(getURL(whoamI, curl = curl), silent=TRUE)
+        if(is.null(attr(resp_who,'class'))) attr(resp_who,'class') <- 'success'
+        if(attr(resp_who,'class') == 'try-error'){
+            a=a+1
+            if(a==5) stop('The server is issuing an alert handshake failure, please try again ni a minute')
+        } else {
+            a=999
+        }
+    }
+    
+    attr(resp_who,'class') <- NULL
+    resp <- fromJSON(resp_who, asText = TRUE) # resp$id == 1 if we are not logged in
     #print(resp)
     
     if(resp['id'] == 1){

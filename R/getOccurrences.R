@@ -1,17 +1,18 @@
 #' Get occurrences for a given species
 #' 
 #' Gets publicly available occurrences from the NBN for a species (or list
-#' of species) specified by Taxon Version Keys in the \code{tvks} parameter.
+#' of species) specified by Taxon Version Keys in the \code{tvks} parameter (see \code{\link{getTVKQuery}}).
 #' Alternativly a group can be specified to \code{group} as a string, such as
 #' 'reptile' (see \code{\link{listGroups}}). To get access to data you must first
-#' register at https://data.nbn.org.uk/User/Register. You will need your username and
-#' password when running this function for the first time.
+#' register at \url{https://data.nbn.org.uk/User/Register}. You will need your username and
+#' password when running this function for the first time.\cr
 #' You can also specify a (list of) dataset key(s) in the \code{datasets}
 #' parameter for the datasets from which you want the data to come (otherwise
 #' all publicly available data will be returned) and the earliest and/or latest 
 #' years for which you want data in the \code{startYear} and \code{endYear}
 #' parameters (otherwise occurrences at any date will be returned). A vice-county
-#' can be specified by passing a name to \code{VC} (see \code{\link{listVCs}}).
+#' or grid reference can be specified by passing a name to \code{VC}
+#' (see \code{\link{listVCs}}), or \code{gridRef}.
 #'
 #' @export
 #' @param tvks a list of TVKs which are strings of 16 alphanumeric characters.
@@ -22,6 +23,10 @@
 #' @param endYear a 4 digit integer year
 #' @param VC a string giving a vice-county name (see \code{\link{listVCs}})
 #' @param group a string giving the name of a group (see \code{\link{listGroups}})
+#' @param gridRef a string giving a gridreference in which to search for occurrences
+#' @param acceptTandC if set to \code{TRUE} you accept the NBN gateway terms and 
+#' conditions and privacy policy. These can be found at \url{https://data.nbn.org.uk/Terms}.
+#' Accepting the terms and conditions supresses the corresponding warning message.
 #' @param silent If TRUE batch request information is supressed
 #' @return a data.frame of occurence records
 #' @author Stuart Ball, JNCC \email{stuart.ball@@jncc.gov.uk}
@@ -38,18 +43,25 @@
 #' }
 #' 
 getOccurrences <- function(tvks=NULL, datasets=NULL, startYear=NULL, 
-                           endYear=NULL, VC=NULL, group=NULL, silent=FALSE) {
+                           endYear=NULL, VC=NULL, group=NULL, gridRef=NULL,
+                           acceptTandC=FALSE, silent=FALSE) {
     
     if(!is.null(tvks) & !is.null(group)) stop('group and tvks cannot be used at the same time')
-    if(is.null(tvks) & is.null(group)) stop('One of group or tvks must be given')
+    if(is.null(tvks) & is.null(group) & is.null(gridRef)) stop('One of group, tvks or gridRef must be given')
     
     # If we are searching by group get the group tvks
     if(!is.null(group)) tvks <- getGroupSpeciesTVKs(group)
         
     ## If you have more than 5 TVKs break it up into batches of 5
     # Set up parameters
-    tvks <- unique(tvks)
-    nTVK <- length(tvks)
+    if(!is.null(tvks)){
+        tvks <- unique(tvks)
+        nTVK <- length(tvks)
+    } else {
+        tvks <- 1
+        nTVK <- 1
+    }
+    
     start <- 1
     d_master <- NULL
     
@@ -57,11 +69,11 @@ getOccurrences <- function(tvks=NULL, datasets=NULL, startYear=NULL,
         
         if(!silent) cat('Requesting batch', ceiling(start/2), 'of', ceiling(nTVK/2),'\n', sep=' ')
         end <- start + 1
-        temp_tvks <-  na.omit(tvks[start:end])
+        if(!is.null(tvks)){temp_tvks <-  na.omit(tvks[start:end])}else{temp_tvks=NULL}
         
         ## return a JSON object (list of lists)
         json <- runnbnurl(service="obs", tvks=temp_tvks, datasets=datasets, 
-                          startYear=startYear, endYear=endYear, VC=VC) 
+                          startYear=startYear, endYear=endYear, VC=VC, gridRef=gridRef) 
         
         if (length(json) > 0) {
             ## find the unique names that are used in occ
@@ -98,6 +110,9 @@ getOccurrences <- function(tvks=NULL, datasets=NULL, startYear=NULL,
         ## Format date columns as dates
         if ("startDate" %in% colnames(d_master)) d_master$startDate <- as.Date(d_master$startDate)
         if ("endDate" %in% colnames(d_master)) d_master$endDate <- as.Date(d_master$endDate)
-                
+        
+        ## Write out a statement about the T's & C's
+        if(!acceptTandC) warning(call.=FALSE, 'IMPORTANT: By using this package you are agreeing to the Gateway Terms & Conditions and Privacy Policy. These can be found at https://data.nbn.org.uk/Terms. This message can be supressed using the acceptTandC argument') 
+    
         return(d_master)
     }
