@@ -56,7 +56,7 @@ runnbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
                useragent = agent, followlocation = TRUE, curl=curl)
     
     #if (url.exists(url)) { #this may slow down the function (not sure it works either)
-    print(url)  
+    #print(url)  
     
     # The server sometimes seems to fail to handshake(?) this is not repeatable and
     # can be resolved by trying again. Here if it fails I get it to try again 5 times
