@@ -1,7 +1,7 @@
 #' Gets TVKs for a query
 #' 
-#' Given a search term this function returns the pTVKs for the first 25 taxa
-#' that match that search on the NBN. 
+#' Given a search term this function returns taxon information, including pTVKs,
+#' for the first 25 taxa that match that search on the NBN. 
 #' 
 #' @export
 #' @param query A query string. This can range from latin binomials to partial english names.
@@ -13,8 +13,9 @@
 #' @param top Logical, if \code{TRUE} only the top answer is returned. This is what the
 #' gateway thinks you are most likely to be after but may not always be right, use with
 #' care!
-#' @return A dataframe containing information on each taxa entry that match the query 
-#' string in rows.
+#' @return A dataframe containing information on each taxa entry that matches the query 
+#' string in rows. ptaxonVersionKey (preferred taxon version key) should be used when
+#' searching for records.
 #' @author Tom August, CEH \email{tomaug@@ceh.ac.uk}
 #' @seealso \code{\link{getGroupSpeciesTVKs}}, \code{\link{getOccurrences}}
 #' @examples \dontrun{ 

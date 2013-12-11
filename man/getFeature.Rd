@@ -28,6 +28,6 @@
   Stuart Ball, JNCC \email{stuart.ball@jncc.gov.uk}
 }
 \seealso{
-  \code{\link{getOccurrences}}, \code{\link{getTaxon}}
+  \code{\link{getOccurrences}}
 }
 

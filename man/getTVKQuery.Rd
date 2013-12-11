@@ -25,11 +25,14 @@
 }
 \value{
   A dataframe containing information on each taxa entry
-  that match the query string in rows.
+  that matches the query string in rows. ptaxonVersionKey
+  (preferred taxon version key) should be used when
+  searching for records.
 }
 \description{
-  Given a search term this function returns the pTVKs for
-  the first 25 taxa that match that search on the NBN.
+  Given a search term this function returns taxon
+  information, including pTVKs, for the first 25 taxa that
+  match that search on the NBN.
 }
 \examples{
 \dontrun{

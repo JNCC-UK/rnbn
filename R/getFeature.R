@@ -9,7 +9,7 @@
 #' @param featureID A the featureID as a string
 #' @return A list containing the JSON object returned by the NBN Gateway.
 #' @author Stuart Ball, JNCC \email{stuart.ball@@jncc.gov.uk}
-#' @seealso \code{\link{getOccurrences}}, \code{\link{getTaxon}}
+#' @seealso \code{\link{getOccurrences}}
 #' @examples \dontrun{ 
 #'  t <- getFeature("97479")
 #'  t['label']  ## [1] "SN413499"

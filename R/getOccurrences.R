@@ -24,13 +24,17 @@
 #' @param VC a string giving a vice-county name (see \code{\link{listVCs}})
 #' @param group a string giving the name of a group (see \code{\link{listGroups}})
 #' @param gridRef a string giving a gridreference in which to search for occurrences
+#' @param latLong logical, if TRUE latitude and longitude are returned as additional columns.
+#' The conversion to latitude and longitude is currently accurate to about about ~20 meters,
+#' greater than the vast majoring of records' precision.
 #' @param acceptTandC if set to \code{TRUE} you accept the NBN gateway terms and 
 #' conditions and privacy policy. These can be found at \url{https://data.nbn.org.uk/Terms}.
 #' Accepting the terms and conditions supresses the corresponding warning message.
 #' @param silent If TRUE batch request information is supressed
 #' @return a data.frame of occurence records
 #' @author Stuart Ball, JNCC \email{stuart.ball@@jncc.gov.uk}
-#' @seealso \code{\link{getFeature}}, \code{\link{getTaxon}}
+#' @seealso \code{\link{getFeature}}, \code{\link{getTVKQuery}}, \code{\link{listVCs}},
+#' \code{\link{listDatasets}}, \code{\link{listGroups}}
 #' @examples \dontrun{ 
 #'  dt1 <- getOccurrences(tvks="NBNSYS0000002987", datasets="GA000373", 
 #'                        startYear="1990", endYear="1991")
@@ -44,7 +48,7 @@
 #' 
 getOccurrences <- function(tvks=NULL, datasets=NULL, startYear=NULL, 
                            endYear=NULL, VC=NULL, group=NULL, gridRef=NULL,
-                           acceptTandC=FALSE, silent=FALSE) {
+                           latLong = TRUE, acceptTandC=FALSE, silent=FALSE) {
     
     if(!is.null(tvks) & !is.null(group)) stop('group and tvks cannot be used at the same time')
     if(is.null(tvks) & is.null(group) & is.null(gridRef)) stop('One of group, tvks or gridRef must be given')
@@ -108,11 +112,20 @@ getOccurrences <- function(tvks=NULL, datasets=NULL, startYear=NULL,
         }
         
         ## Format date columns as dates
-        if ("startDate" %in% colnames(d_master)) d_master$startDate <- as.Date(d_master$startDate)
-        if ("endDate" %in% colnames(d_master)) d_master$endDate <- as.Date(d_master$endDate)
-        
+        if("startDate" %in% colnames(d_master)) d_master$startDate <- as.Date(d_master$startDate)
+        if("endDate" %in% colnames(d_master)) d_master$endDate <- as.Date(d_master$endDate)
+    
+        ## Add lat long if requested
+        if(latLong & !is.null(d_master)){
+            
+            latlong <- gr2gps_latlon(d_master$location, projection=NULL, centre=TRUE)
+            d_master$latitude <- latlong$LATITUDE
+            d_master$longitude <- latlong$LONGITUDE
+            
+        }
+    
         ## Write out a statement about the T's & C's
-        if(!acceptTandC) warning(call.=FALSE, 'IMPORTANT: By using this package you are agreeing to the Gateway Terms & Conditions and Privacy Policy. These can be found at https://data.nbn.org.uk/Terms. This message can be supressed using the acceptTandC argument') 
+        if(!acceptTandC) message('IMPORTANT: By using this package you are agreeing to the Gateway Terms & Conditions and Privacy Policy. These can be found at https://data.nbn.org.uk/Terms. This message can be supressed using the acceptTandC argument') 
     
         return(d_master)
     }

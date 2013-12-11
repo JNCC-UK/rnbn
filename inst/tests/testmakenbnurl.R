@@ -15,7 +15,7 @@ test_that("makenbnurl recognises services", {
 })
 
 test_that("makenbnurl checks for minimum parameters", {
-    expect_error(makenbnurl(service="obs"), "tvks parameter is required")
+    expect_error(makenbnurl(service="obs"), "One of tvks or gridRef is required")
     expect_error(makenbnurl(service="fea"), "feature parameter is required")
     expect_error(makenbnurl(service="tax"), "tvks parameter is required")
 })

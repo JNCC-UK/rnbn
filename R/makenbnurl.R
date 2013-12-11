@@ -37,7 +37,8 @@
 #' @examples
 #' makenbnurl(service="obs", tvks="NBNSYS0000007073")
 #' makenbnurl(service="obs", tvks="NBNSYS0000007073", datasets="SGB00001")
-#' makenbnurl(service="obs", tvks="NBNSYS0000007073", datasets="SGB00001", startYear="1990", endYear="2010")
+#' makenbnurl(service="obs", tvks="NBNSYS0000007073", datasets="SGB00001",
+#'            startYear="1990", endYear="2010")
 #' makenbnurl(service="feature", feature="284443")
 #' makenbnurl(service="taxon", tvks="NBNSYS0000007073")
 #' 
@@ -91,7 +92,8 @@ makenbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
             ## MUST have tvks (which can be a list)
             ## datasets (can be a list), startYear and endYear are optional
             o ={
-                url <- paste(url, "taxonObservations?", sep="")                  
+                url <- paste(url, "taxonObservations?", sep="")     
+                if (is.null(gridRef) & is.null(tvks)) stop("One of tvks or gridRef is required")
                 if (is.character(tvks)) {
                     if (checkID(tvks, list=TRUE, len=16)) {
                         url <- paste(url, "ptvk=", paste(unlist(tvks), collapse="&ptvk="), sep="")

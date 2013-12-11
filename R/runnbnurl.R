@@ -26,7 +26,8 @@
 #' @return a JSON object resulting from the call
 #' @author Stuart Ball, JNCC \email{stuart.ball@@jncc.gov.uk}
 #' @examples \dontrun{ 
-#'  json <- runnbnurl(service="obs", tvks="NBNSYS0000007073", datasets="SGB00001", startYear="1990", endYear="2010")
+#'  json <- runnbnurl(service="obs", tvks="NBNSYS0000007073", datasets="SGB00001",
+#'                    startYear="1990", endYear="2010")
 #' }
 #' 
 runnbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
@@ -68,7 +69,7 @@ runnbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
         #print(attr(resp,'class'))
         if(attr(resp,'class') == 'try-error'){
             a=a+1
-            if(a==5) stop('The server is issuing an alert handshake failure, please try again ni a minute')
+            if(a==5) stop('The server is not responding correctly, please try again in a minute')
         } else {
             a=999
         }

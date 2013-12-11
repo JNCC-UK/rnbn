@@ -25,6 +25,7 @@ nbnLogin <- function(){
     while(a<5){
         resp_who <- try(getURL(whoamI, curl = curl), silent=TRUE)
         if(is.null(attr(resp_who,'class'))) attr(resp_who,'class') <- 'success'
+        if(grepl('Error report', resp_who)) stop('NBN server return included "Error report" when checking if you are logged in. This happens when the NBN servers are down, check https://data.nbn.org.uk/ to see if there is a known issue')
         if(attr(resp_who,'class') == 'try-error'){
             a=a+1
             if(a==5) stop('The server is issuing an alert handshake failure, please try again ni a minute')

@@ -67,7 +67,8 @@
 \examples{
 makenbnurl(service="obs", tvks="NBNSYS0000007073")
 makenbnurl(service="obs", tvks="NBNSYS0000007073", datasets="SGB00001")
-makenbnurl(service="obs", tvks="NBNSYS0000007073", datasets="SGB00001", startYear="1990", endYear="2010")
+makenbnurl(service="obs", tvks="NBNSYS0000007073", datasets="SGB00001",
+           startYear="1990", endYear="2010")
 makenbnurl(service="feature", feature="284443")
 makenbnurl(service="taxon", tvks="NBNSYS0000007073")
 }

@@ -4,8 +4,8 @@
 \usage{
   getOccurrences(tvks = NULL, datasets = NULL,
     startYear = NULL, endYear = NULL, VC = NULL,
-    group = NULL, gridRef = NULL, acceptTandC = FALSE,
-    silent = FALSE)
+    group = NULL, gridRef = NULL, latLong = TRUE,
+    acceptTandC = FALSE, silent = FALSE)
 }
 \arguments{
   \item{tvks}{a list of TVKs which are strings of 16
@@ -27,6 +27,12 @@
 
   \item{gridRef}{a string giving a gridreference in which
   to search for occurrences}
+
+  \item{latLong}{logical, if TRUE latitude and longitude
+  are returned as additional columns. The conversion to
+  latitude and longitude is currently accurate to about
+  about ~20 meters, greater than the vast majoring of
+  records' precision.}
 
   \item{acceptTandC}{if set to \code{TRUE} you accept the
   NBN gateway terms and conditions and privacy policy.
@@ -78,6 +84,8 @@
   Stuart Ball, JNCC \email{stuart.ball@jncc.gov.uk}
 }
 \seealso{
-  \code{\link{getFeature}}, \code{\link{getTaxon}}
+  \code{\link{getFeature}}, \code{\link{getTVKQuery}},
+  \code{\link{listVCs}}, \code{\link{listDatasets}},
+  \code{\link{listGroups}}
 }
 
