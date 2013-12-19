@@ -3,14 +3,18 @@
 \title{Build the URL to call NBN web-services}
 \usage{
   makenbnurl(service = NULL, tvks = NULL, datasets = NULL,
-    feature = NULL, startYear = NULL, endYear = NULL)
+    feature = NULL, startYear = NULL, endYear = NULL,
+    list = NULL, VC = NULL, group = NULL, query = NULL,
+    gridRef = NULL)
 }
 \arguments{
   \item{service}{the service you want to call. One of
   \code{"obs"} for the taxonObservations service,
-  \code{"feature"} for the features service or
-  \code{"taxon"} for the taxa service. The first letter is
-  sufficient}
+  \code{"feature"} for the features service, \code{"taxon"}
+  for the taxa service, \code{"list"} for listing services,
+  \code{"ancestry"} for taxonomy service, \code{"species"}
+  for the species service and \code{"query"} for the search
+  service.}
 
   \item{tvks}{a list of TVKs which are strings of 16
   alphanumeric characters}
@@ -23,6 +27,21 @@
   \item{startYear}{a 4 digit year}
 
   \item{endYear}{a 4 digit year}
+
+  \item{list}{url segment as a string as required to append
+  to the base url to give the list required as a part of
+  the \code{"list"} service}
+
+  \item{VC}{a string giving a vice-county name (see
+  \code{\link{listVCs}})}
+
+  \item{group}{a string giving the name of a group (see
+  \code{\link{listGroups}})}
+
+  \item{query}{a string used to search for taxa}
+
+  \item{gridRef}{a string giving a gridreference in which
+  to search for occurrences}
 }
 \value{
   the URL to call - a character string
@@ -34,20 +53,22 @@
   following services are available at the time of writing:
   \cr
   \code{taxonObservations?ptvk=<tvk>&datasetKey=<dataset>&startYear=<year>
-  &endYear=<year>} - get observations for the given (list
-  of) Taxon Version Keys (TVKs) for the given (list of)
-  dataset keys optionally with dates between startYear and
-  endYear. If no dataset keys are given then all publically
-  available data for the taxa will be returned \cr\cr
-  \code{features/<featureID>} - get details about a
-  particular location given its <featureID> \cr\cr
-  \code{taxa/<tvk>} - get details about a taxon given its
-  <tvk>
+  &endYear=<year>&featureID=<feature>} - get observations
+  for the given (list of) Taxon Version Keys (TVKs) for the
+  given (list of) dataset keys optionally with dates
+  between startYear and endYear and within the spatial
+  feature, featureID (e.g. a vice-county). If no dataset
+  keys are given then all publically available data for the
+  taxa will be returned \cr\cr \code{features/<featureID>}
+  - get details about a particular location given its
+  <featureID> \cr\cr \code{taxa/<tvk>} - get details about
+  a taxon given its <tvk>
 }
 \examples{
 makenbnurl(service="obs", tvks="NBNSYS0000007073")
 makenbnurl(service="obs", tvks="NBNSYS0000007073", datasets="SGB00001")
-makenbnurl(service="obs", tvks="NBNSYS0000007073", datasets="SGB00001", startYear="1990", endYear="2010")
+makenbnurl(service="obs", tvks="NBNSYS0000007073", datasets="SGB00001",
+           startYear="1990", endYear="2010")
 makenbnurl(service="feature", feature="284443")
 makenbnurl(service="taxon", tvks="NBNSYS0000007073")
 }

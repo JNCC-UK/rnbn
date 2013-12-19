@@ -5,35 +5,46 @@
 #' Parameters can be added, depending on the service called. \cr\cr
 #' The following services are available at the time of writing: \cr
 #' \code{taxonObservations?ptvk=<tvk>&datasetKey=<dataset>&startYear=<year> 
-#' &endYear=<year>} - get observations for the given (list of) Taxon Version 
-#' Keys (TVKs) for the given (list of) dataset keys optionally with dates 
-#' between startYear and endYear. If no dataset keys are given then all 
+#' &endYear=<year>&featureID=<feature>} - get observations for the given
+#' (list of) Taxon Version Keys (TVKs) for the given (list of) dataset keys
+#' optionally with dates between startYear and endYear and within the spatial
+#' feature, featureID (e.g. a vice-county). If no dataset keys are given then all 
 #' publically available data for the taxa will be returned \cr\cr
 #' \code{features/<featureID>} - get details about a particular location given
 #' its <featureID> \cr\cr
-#' \code{taxa/<tvk>} - get details about a taxon  given its <tvk>
+#' \code{taxa/<tvk>} - get details about a taxon given its <tvk>
 #' 
 #' @export
 #' @param service the service you want to call. One of \code{"obs"} for the 
-#'   taxonObservations service, \code{"feature"} for the features service or 
-#'   \code{"taxon"} for the taxa service. The first letter is sufficient
+#'   taxonObservations service, \code{"feature"} for the features service, 
+#'   \code{"taxon"} for the taxa service, \code{"list"} for listing services,
+#'   \code{"ancestry"} for taxonomy service, \code{"species"} for the 
+#'   species service and \code{"query"} for the search service.
 #' @param tvks a list of TVKs which are strings of 16 alphanumeric characters
 #' @param datasets a list of dataset keys which are strings of 8 alphanumeric 
 #'   characters
 #' @param feature a featureID an integer number
 #' @param startYear a 4 digit year
 #' @param endYear a 4 digit year
+#' @param list url segment as a string as required to append to the base url to 
+#'        give the list required as a part of the \code{"list"} service 
+#' @param VC a string giving a vice-county name (see \code{\link{listVCs}})
+#' @param group a string giving the name of a group (see \code{\link{listGroups}})
+#' @param query a string used to search for taxa
+#' @param gridRef a string giving a gridreference in which to search for occurrences
 #' @return the URL to call - a character string
 #' @author Stuart Ball, JNCC \email{stuart.ball@@jncc.gov.uk}
 #' @examples
 #' makenbnurl(service="obs", tvks="NBNSYS0000007073")
 #' makenbnurl(service="obs", tvks="NBNSYS0000007073", datasets="SGB00001")
-#' makenbnurl(service="obs", tvks="NBNSYS0000007073", datasets="SGB00001", startYear="1990", endYear="2010")
+#' makenbnurl(service="obs", tvks="NBNSYS0000007073", datasets="SGB00001",
+#'            startYear="1990", endYear="2010")
 #' makenbnurl(service="feature", feature="284443")
 #' makenbnurl(service="taxon", tvks="NBNSYS0000007073")
 #' 
 makenbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
-                    startYear=NULL, endYear=NULL) {
+                       startYear=NULL, endYear=NULL, list=NULL, VC=NULL, group=NULL,
+                       query=NULL, gridRef=NULL) {
 
     ##----------------------------------------------------------------------
     ## function to check that parameters are correctly formatted
@@ -62,7 +73,7 @@ makenbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
     ##----------------------------------------------------------------------
     
     ## This is the base url for the NBN web-services as of April 2013
-    baseURL <- "http://staging.testnbn.net/api/"
+    baseURL <- "https://data.nbn.org.uk/api/"
     url <- baseURL
     
     ## cope with year/feature parameters being given as numbers
@@ -81,7 +92,8 @@ makenbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
             ## MUST have tvks (which can be a list)
             ## datasets (can be a list), startYear and endYear are optional
             o ={
-                url <- paste(url, "taxonObservations?", sep="")
+                url <- paste(url, "taxonObservations?", sep="")     
+                if (is.null(gridRef) & is.null(tvks)) stop("One of tvks or gridRef is required")
                 if (is.character(tvks)) {
                     if (checkID(tvks, list=TRUE, len=16)) {
                         url <- paste(url, "ptvk=", paste(unlist(tvks), collapse="&ptvk="), sep="")
@@ -89,7 +101,7 @@ makenbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
                         stop("tvks parameter is incorrect")
                     }
                 } else {
-                    stop("tvks parameter is required")
+                    #stop("tvks parameter is required")
                 }
                 if (is.character(datasets)) {
                     if (checkID(datasets, list=TRUE, len=8)) {
@@ -114,6 +126,13 @@ makenbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
                     } else {
                         stop("endYear parameter is incorrect")
                     }
+                }
+                if (!is.null(VC)) {
+                    if(is.character(VC)) VCID <- getVCid(VC)
+                    url <- paste(url, "&featureID=", VCID, sep="") 
+                }
+                if (!is.null(gridRef)) {
+                    url <- paste(url, "&gridRef=", gridRef, sep="") 
                 }
             },
                
@@ -145,11 +164,43 @@ makenbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
                 } else {
                     stop("tvks parameter is required")
                 }
-        }, 
+            },
+               
+           ## details for ancestry (taxonomy) ---------------------------------------
+           ## MUST have single value in tvks
+           a = {
+               url <- paste(url, "taxa/", sep="")
+               if (is.character(tvks)) {
+                   if (checkID(tvks, list=FALSE, len=16)) {
+                       url <- paste(url, paste(tvks,'/taxonomy',sep=''), sep='')    
+                   } else {
+                       stop("tvks parameter is incorrect")    
+                   }
+               } else {
+                   stop("tvks parameter is required")
+               }
+           },
+               
+           ## details for reference lists ---------------------------------------
+           l = {
+               url <- paste(url, list, sep="")
+           },
+           
+           ## details of species in a given group -------------------------------
+           s = {
+               url <- paste(url, 'taxa?&taxonOutputGroupKey=', group, '&rows=5000', sep="")
+           },
+               
+           ## details of taxa matching a search -------------------------------
+           q = {
+               url <- paste(url, 'search/taxa?q=', query, sep="")
+           },
         stop("service not recognised")) ## end of switch
+        
     ## no value given for service
     } else {
         stop("no service specified")    
     }
-    url  ## return value
+    
+    return(url)  ## return value
 }

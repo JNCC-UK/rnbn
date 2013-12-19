@@ -3,14 +3,18 @@
 \title{Run the constructed url and get data}
 \usage{
   runnbnurl(service = NULL, tvks = NULL, datasets = NULL,
-    feature = NULL, startYear = NULL, endYear = NULL)
+    feature = NULL, startYear = NULL, endYear = NULL,
+    list = NULL, VC = NULL, group = NULL, query = NULL,
+    gridRef = NULL)
 }
 \arguments{
   \item{service}{the service you want to call. One of
   \code{"obs"} for the taxonObservations service,
-  \code{"feature"} for the features service or
-  \code{"taxon"} for the taxa service. The first letter is
-  sufficient}
+  \code{"feature"} for the features service, \code{"taxon"}
+  for the taxa service, \code{"list"} for listing services,
+  \code{"ancestry"} for taxonomy service and
+  \code{"species"} for the species service. The first
+  letter is sufficient}
 
   \item{tvks}{a list of TVKs which are strings of 16
   alphanumeric characters}
@@ -24,6 +28,21 @@
   \item{startYear}{a 4 digit integer year}
 
   \item{endYear}{a 4 digit integer year}
+
+  \item{list}{url segment as a string as required to append
+  to the base url to give the list required as a part of
+  the \code{"list"} service.}
+
+  \item{VC}{a string giving a vice-county name (see
+  \code{\link{listVCs}})}
+
+  \item{group}{a string giving the name of a group (see
+  \code{\link{listGroups}})}
+
+  \item{query}{a string used to perform a taxa search}
+
+  \item{gridRef}{a string giving a gridreference in which
+  to search for occurrences}
 }
 \value{
   a JSON object resulting from the call
@@ -35,7 +54,8 @@
 }
 \examples{
 \dontrun{
- json <- runnbnurl(service="obs", tvks="NBNSYS0000007073", datasets="SGB00001", startYear="1990", endYear="2010")
+ json <- runnbnurl(service="obs", tvks="NBNSYS0000007073", datasets="SGB00001",
+                   startYear="1990", endYear="2010")
 }
 }
 \author{

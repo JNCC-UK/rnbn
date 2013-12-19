@@ -1,0 +1,27 @@
+\name{listOrganisations}
+\alias{listOrganisations}
+\title{Get organisation definitions}
+\usage{
+  listOrganisations()
+}
+\value{
+  A dataframe containing the definitions of organisations
+  on the NBN Gateway, including their web address where
+  available
+}
+\description{
+  Gives a dataframe of the organisation definitions from
+  the NBN Gateway for reference.
+}
+\examples{
+\dontrun{
+ t <- listOrganisations()
+}
+}
+\author{
+  Stuart Ball, JNCC \email{stuart.ball@jncc.gov.uk}
+}
+\seealso{
+  \code{\link{getFeature}}, \code{\link{getOccurrences}}
+}
+
