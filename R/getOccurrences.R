@@ -22,7 +22,11 @@
 #' @param startYear a 4 digit integer year
 #' @param endYear a 4 digit integer year
 #' @param VC a string giving a vice-county name (see \code{\link{listVCs}})
-#' @param group a string giving the name of a group (see \code{\link{listGroups}})
+#' @param group a string giving the name of a group (see \code{\link{listGroups}}).
+#' Using group will retireve data for all TVKs in this group. for example using group 'reptile'
+#' will search using over 150 TVKs including TVKs for higher taxonomic groups such families
+#' within reptiles. Therefore it may be preferrable to search using a list TVKs aquired
+#' using getTVKQuery
 #' @param gridRef a string giving a gridreference in which to search for occurrences
 #' @param latLong logical, if TRUE latitude and longitude are returned as additional columns.
 #' The conversion to latitude and longitude is currently accurate to about about ~20 meters,
@@ -55,8 +59,8 @@ getOccurrences <- function(tvks=NULL, datasets=NULL, startYear=NULL,
     
     # If we are searching by group get the group tvks
     if(!is.null(group)) tvks <- getGroupSpeciesTVKs(group)
-        
-    ## If you have more than 5 TVKs break it up into batches of 5
+    
+    ## If you have more than 5 TVKs break it up into batches of 2
     # Set up parameters
     if(!is.null(tvks)){
         tvks <- unique(tvks)
@@ -99,33 +103,33 @@ getOccurrences <- function(tvks=NULL, datasets=NULL, startYear=NULL,
             d <- as.data.frame(d, stringsAsFactors = F)
             
             if(is.null(d_master)){d_master <- d} else{d_master <- merge(d_master, d, all = TRUE)}
-                                
-            }
-        
-            start <- start + 2
-        
-        }#end of while
-
-        ## we are only interested in presences (not absences)
-        if ("absence" %in% colnames(d_master)) {
-            d_master <- d_master[which(d_master$absence == FALSE),]
-        }
-        
-        ## Format date columns as dates
-        if("startDate" %in% colnames(d_master)) d_master$startDate <- as.Date(d_master$startDate)
-        if("endDate" %in% colnames(d_master)) d_master$endDate <- as.Date(d_master$endDate)
-    
-        ## Add lat long if requested
-        if(latLong & !is.null(d_master)){
-            
-            latlong <- gr2gps_latlon(d_master$location, projection=NULL, centre=TRUE)
-            d_master$latitude <- latlong$LATITUDE
-            d_master$longitude <- latlong$LONGITUDE
             
         }
+        
+        start <- start + 2
+        
+    }#end of while
     
-        ## Write out a statement about the T's & C's
-        if(!acceptTandC) message('IMPORTANT: By using this package you are agreeing to the Gateway Terms & Conditions and Privacy Policy. These can be found at https://data.nbn.org.uk/Terms. This message can be supressed using the acceptTandC argument') 
-    
-        return(d_master)
+    ## we are only interested in presences (not absences)
+    if ("absence" %in% colnames(d_master)) {
+        d_master <- d_master[which(d_master$absence == FALSE),]
     }
+    
+    ## Format date columns as dates
+    if("startDate" %in% colnames(d_master)) d_master$startDate <- as.Date(d_master$startDate)
+    if("endDate" %in% colnames(d_master)) d_master$endDate <- as.Date(d_master$endDate)
+    
+    ## Add lat long if requested
+    if(latLong & !is.null(d_master)){
+        
+        latlong <- gr2gps_latlon(d_master$location, projection=NULL, centre=TRUE)
+        d_master$latitude <- latlong$LATITUDE
+        d_master$longitude <- latlong$LONGITUDE
+        
+    }
+    
+    ## Write out a statement about the T's & C's
+    if(!acceptTandC) message('IMPORTANT: By using this package you are agreeing to the Gateway Terms & Conditions and Privacy Policy. These can be found at https://data.nbn.org.uk/Terms. This message can be suppressed using the acceptTandC argument') 
+    
+    return(d_master)
+}
