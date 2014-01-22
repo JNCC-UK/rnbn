@@ -23,7 +23,12 @@
   \code{\link{listVCs}})}
 
   \item{group}{a string giving the name of a group (see
-  \code{\link{listGroups}})}
+  \code{\link{listGroups}}). Using group will retireve data
+  for all TVKs in this group. for example using group
+  'reptile' will search using over 150 TVKs including TVKs
+  for higher taxonomic groups such families within
+  reptiles. Therefore it may be preferrable to search using
+  a list TVKs aquired using getTVKQuery}
 
   \item{gridRef}{a string giving a gridreference in which
   to search for occurrences}

@@ -22,7 +22,11 @@
 #' @param startYear a 4 digit integer year
 #' @param endYear a 4 digit integer year
 #' @param VC a string giving a vice-county name (see \code{\link{listVCs}})
-#' @param group a string giving the name of a group (see \code{\link{listGroups}})
+#' @param group a string giving the name of a group (see \code{\link{listGroups}}).
+#' Using group will retireve data for all TVKs in this group. for example using group 'reptile'
+#' will search using over 150 TVKs including TVKs for higher taxonomic groups such families
+#' within reptiles. Therefore it may be preferrable to search using a list TVKs aquired
+#' using getTVKQuery
 #' @param gridRef a string giving a gridreference in which to search for occurrences
 #' @param latLong logical, if TRUE latitude and longitude are returned as additional columns.
 #' The conversion to latitude and longitude is currently accurate to about about ~20 meters,
@@ -56,7 +60,7 @@ getOccurrences <- function(tvks=NULL, datasets=NULL, startYear=NULL,
     # If we are searching by group get the group tvks
     if(!is.null(group)) tvks <- getGroupSpeciesTVKs(group)
         
-    ## If you have more than 5 TVKs break it up into batches of 5
+    ## If you have more than 5 TVKs break it up into batches of 2
     # Set up parameters
     if(!is.null(tvks)){
         tvks <- unique(tvks)
@@ -125,7 +129,7 @@ getOccurrences <- function(tvks=NULL, datasets=NULL, startYear=NULL,
         }
     
         ## Write out a statement about the T's & C's
-        if(!acceptTandC) message('IMPORTANT: By using this package you are agreeing to the Gateway Terms & Conditions and Privacy Policy. These can be found at https://data.nbn.org.uk/Terms. This message can be supressed using the acceptTandC argument') 
+        if(!acceptTandC) message('IMPORTANT: By using this package you are agreeing to the Gateway Terms & Conditions and Privacy Policy. These can be found at https://data.nbn.org.uk/Terms. This message can be suppressed using the acceptTandC argument') 
     
         return(d_master)
     }
