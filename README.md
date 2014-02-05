@@ -17,7 +17,11 @@ To **install** the development version of rnbn, it's easiest to use the `devtool
 
 If you have difficulties installing rnbn using this method try updating your version of R to the most up-to-date version available. If you still have problems please contact us or use the issues page.
 
-### How to us the package
--------------------------
+### How to use the package
+--------------------------
 
-A good starting point is the vignette which you can find above in the 'doc' folder. Once you have read that, the help files for each function should guide you the rest of the way. If you have any questions just get in touch via email or using the issues page.
+A good starting point is the vignette. Once you have installed and loaded the package use the following command and click on the link to "User guides, package vignettes and other documentation". Alternatively you can find it above in the 'doc' folder.
+
+    help(package='rnbn')
+
+Once you have read the vignette, the help files for each function should guide you the rest of the way. If you have any questions just get in touch via email or using the issues page.
