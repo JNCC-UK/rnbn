@@ -76,7 +76,18 @@ runnbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
     }
     
     attr(resp,'class') <- NULL
-    return(fromJSON(resp, asText=TRUE))
+    
+    resp <- try(fromJSON(resp, asText=TRUE), silent = TRUE)
+    
+    if(class(resp) == 'try-error'){
+        message <- attr(resp,'condition')$message
+        stop(paste('When interpreting response from NBN servers:',
+                 message,
+                 '. This can occur if the NBN servers are experiencing problems.',
+                 'If the problem persists report this error to the package maintainers'))  
+    } 
+    
+    return(resp)
     
     #} else {
     #    stop("url not found")

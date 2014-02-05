@@ -1,24 +1,16 @@
 #' Get occurrences for a given species
 #' 
-#' Gets publicly available occurrences from the NBN for a species (or list
-#' of species) specified by Taxon Version Keys in the \code{tvks} parameter (see \code{\link{getTVKQuery}}).
-#' Alternativly a group can be specified to \code{group} as a string, such as
-#' 'reptile' (see \code{\link{listGroups}}). To get access to data you must first
-#' register at \url{https://data.nbn.org.uk/User/Register}. You will need your username and
-#' password when running this function for the first time.\cr
-#' You can also specify a (list of) dataset key(s) in the \code{datasets}
-#' parameter for the datasets from which you want the data to come (otherwise
-#' all publicly available data will be returned) and the earliest and/or latest 
-#' years for which you want data in the \code{startYear} and \code{endYear}
-#' parameters (otherwise occurrences at any date will be returned). A vice-county
-#' or grid reference can be specified by passing a name to \code{VC}
-#' (see \code{\link{listVCs}}), or \code{gridRef}.
+#' Gets occurrence data from the NBN to which you have access. To get access to data
+#' you must first register at \url{https://data.nbn.org.uk/User/Register}. You will
+#' need your username and password when running this function for the first time.\cr
+#' You can specify the data to retrieve by dataset, species, time, location and/or
+#' group.
 #'
 #' @export
 #' @param tvks a list of TVKs which are strings of 16 alphanumeric characters.
 #' You can look these up using \code{getTVKQuery}
 #' @param datasets a list of dataset keys which are strings of 8 alphanumeric 
-#'   characters
+#'   characters. Look up datasets here: \url{https://data.nbn.org.uk/Datasets}
 #' @param startYear a 4 digit integer year
 #' @param endYear a 4 digit integer year
 #' @param VC a string giving a vice-county name (see \code{\link{listVCs}})
@@ -36,7 +28,7 @@
 #' Accepting the terms and conditions supresses the corresponding warning message.
 #' @param silent If TRUE batch request information is supressed
 #' @return a data.frame of occurence records
-#' @author Stuart Ball, JNCC \email{stuart.ball@@jncc.gov.uk}
+#' @author Stuart Ball, JNCC \email{stuart.ball@@jncc.gov.uk} and Tom August, CEH \email{tomaug@@ceh.ac.uk}
 #' @seealso \code{\link{getFeature}}, \code{\link{getTVKQuery}}, \code{\link{listVCs}},
 #' \code{\link{listDatasets}}, \code{\link{listGroups}}
 #' @examples \dontrun{ 
