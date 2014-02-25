@@ -2,8 +2,8 @@
 \alias{gr2gps_latlon}
 \title{Covert grid reference to latitude and longitude}
 \usage{
-  gr2gps_latlon(gridref, precision = NULL,
-    projection = "OSGB", centre = TRUE)
+gr2gps_latlon(gridref, precision = NULL, projection = "OSGB",
+  centre = TRUE)
 }
 \arguments{
   \item{gridref}{a vector of strings giving grid references
@@ -24,10 +24,10 @@
   coordinates for the bottom left corner are given.}
 }
 \value{
-  A dataframe of results are returned
+A dataframe of results are returned
 }
 \description{
-  Covert grid reference to latitude and longitude
+Covert grid reference to latitude and longitude
 }
 \examples{
 gr2gps_latlon('SU616896')

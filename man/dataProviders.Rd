@@ -1,0 +1,34 @@
+\name{dataProviders}
+\alias{dataProviders}
+\title{Get data providers}
+\usage{
+dataProviders(datasets = NULL)
+}
+\arguments{
+  \item{datasets}{A string (or list of strings) giving the
+  dataset keys to search within. Use
+  \code{\link{listDatasets}} to find dataset keys, or visit
+  the NBN gateway \url{https://data.nbn.org.uk/Datasets}}
+}
+\value{
+a data.frame giving the details of data providers
+}
+\description{
+Gets details of data providers for a given dataset (or list
+of datasets)
+}
+\examples{
+\dontrun{
+
+providers <- dataProviders(c('GA000426','GA000832'))
+
+}
+}
+\author{
+Stuart Ball, JNCC \email{stuart.ball@jncc.gov.uk} and Tom
+August, CEH \email{tomaug@ceh.ac.uk}
+}
+\seealso{
+\code{\link{listDatasets}}
+}
+

@@ -2,10 +2,9 @@
 \alias{runnbnurl}
 \title{Run the constructed url and get data}
 \usage{
-  runnbnurl(service = NULL, tvks = NULL, datasets = NULL,
-    feature = NULL, startYear = NULL, endYear = NULL,
-    list = NULL, VC = NULL, group = NULL, query = NULL,
-    gridRef = NULL)
+runnbnurl(service = NULL, tvks = NULL, datasets = NULL, feature = NULL,
+  startYear = NULL, endYear = NULL, list = NULL, VC = NULL,
+  group = NULL, query = NULL, gridRef = NULL)
 }
 \arguments{
   \item{service}{the service you want to call. One of
@@ -45,12 +44,12 @@
   to search for occurrences}
 }
 \value{
-  a JSON object resulting from the call
+a JSON object resulting from the call
 }
 \description{
-  The URL to call a web-service is constructed using
-  makenbnurl() This is run and, hopefully, returns a JSON
-  object
+The URL to call a web-service is constructed using
+makenbnurl() This is run and, hopefully, returns a JSON
+object
 }
 \examples{
 \dontrun{
@@ -59,6 +58,6 @@
 }
 }
 \author{
-  Stuart Ball, JNCC \email{stuart.ball@jncc.gov.uk}
+Stuart Ball, JNCC \email{stuart.ball@jncc.gov.uk}
 }
 

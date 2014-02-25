@@ -1,7 +1,7 @@
 #' Build the URL to call NBN web-services
 #' 
 #' The base URL for the RESTful services is:
-#' \url{http://http://staging.testnbn.net/api/} 
+#' \url{https://data.nbn.org.uk/api/} 
 #' Parameters can be added, depending on the service called. \cr\cr
 #' The following services are available at the time of writing: \cr
 #' \code{taxonObservations?ptvk=<tvk>&datasetKey=<dataset>&startYear=<year> 
@@ -194,6 +194,15 @@ makenbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
            ## details of taxa matching a search -------------------------------
            q = {
                url <- paste(url, 'search/taxa?q=', query, sep="")
+           },
+           
+           ## details of taxa in a dataset -------------------------------
+           d = {
+               url <- paste(url, 'taxonDatasets/', datasets, '/taxa', sep="")
+           },
+           ## details of providers of a dataset -------------------------------
+           p = {
+               url <- paste(url, 'datasets/', datasets, sep="")
            },
         stop("service not recognised")) ## end of switch
         

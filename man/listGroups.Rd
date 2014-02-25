@@ -2,15 +2,15 @@
 \alias{listGroups}
 \title{Get group definitions}
 \usage{
-  listGroups()
+listGroups()
 }
 \value{
-  A dataframe containing the definitions of groups on the
-  NBN Gateway
+A dataframe containing the definitions of groups on the NBN
+Gateway
 }
 \description{
-  Gives a dataframe of the group definitions from the NBN
-  Gateway for reference.
+Gives a dataframe of the group definitions from the NBN
+Gateway for reference.
 }
 \examples{
 \dontrun{
@@ -18,9 +18,9 @@
 }
 }
 \author{
-  Stuart Ball, JNCC \email{stuart.ball@jncc.gov.uk}
+Stuart Ball, JNCC \email{stuart.ball@jncc.gov.uk}
 }
 \seealso{
-  \code{\link{getFeature}}, \code{\link{getOccurrences}}
+\code{\link{getFeature}}, \code{\link{getOccurrences}}
 }
 

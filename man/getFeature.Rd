@@ -2,21 +2,21 @@
 \alias{getFeature}
 \title{Get details for a given feature}
 \usage{
-  getFeature(featureID = NULL)
+getFeature(featureID = NULL)
 }
 \arguments{
   \item{featureID}{A the featureID as a string}
 }
 \value{
-  A list containing the JSON object returned by the NBN
-  Gateway.
+A list containing the JSON object returned by the NBN
+Gateway.
 }
 \description{
-  Given the featureID (an integer), this function get
-  details of the taxon from the NBN Gateway. These include
-  the label (name), feature type, etc. If the feature is a
-  \code{GridSquare} then the information includes the
-  bounding box coordinates.
+Given the featureID (an integer), this function get details
+of the taxon from the NBN Gateway. These include the label
+(name), feature type, etc. If the feature is a
+\code{GridSquare} then the information includes the
+bounding box coordinates.
 }
 \examples{
 \dontrun{
@@ -25,9 +25,9 @@
 }
 }
 \author{
-  Stuart Ball, JNCC \email{stuart.ball@jncc.gov.uk}
+Stuart Ball, JNCC \email{stuart.ball@jncc.gov.uk}
 }
 \seealso{
-  \code{\link{getOccurrences}}
+\code{\link{getOccurrences}}
 }
 

@@ -2,16 +2,28 @@
 \alias{nbnLogin}
 \title{Get Login credentials for NBN access}
 \usage{
-  nbnLogin()
+nbnLogin(username = NULL, password = NULL)
 }
-\value{
-  NULL
+\arguments{
+  \item{username}{optional character giving username}
+
+  \item{password}{optional character giving password}
 }
 \description{
-  Opens a dialog box for the user to enter credentials and
-  manages cookies
+Opens a dialog box for the user to enter credentials if
+username and password are not given, also manages cookies.
+}
+\details{
+This function is used within the getOccurrences function
+and should not normally need to be used by users. It
+automatically handles cookies and only prompts users for
+username and password if no cookies exist. The facility to
+provide a username and password has been added for people
+who may have issues with cookies or perhaps share an
+account with a number of others, however hardcoding
+usernames and passwords has obvious security issues.
 }
 \author{
-  Tom August, CEH \email{tom.august@ceh.ac.uk}
+Tom August, CEH \email{tom.august@ceh.ac.uk}
 }
 

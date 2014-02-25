@@ -43,4 +43,10 @@ test_that("Check gridRef only search", {
     expect_that(length(hecs), equals(1))
     expect_that(hecs[[1]], equals('SP00'))
 })
+test_that("Check providers are returned", {
+    expect_true('providers' %in% names(attributes(dt)))
+    expect_is(attr(dt,'providers'), 'data.frame')
+    expect_true(ncol(attr(dt,'providers')) == 7)
+    expect_true('Biological Records Centre' %in% attr(dt,'providers')$name)
+})
 rm(dt)

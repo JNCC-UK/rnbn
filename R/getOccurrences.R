@@ -27,7 +27,8 @@
 #' conditions and privacy policy. These can be found at \url{https://data.nbn.org.uk/Terms}.
 #' Accepting the terms and conditions supresses the corresponding warning message.
 #' @param silent If TRUE batch request information is supressed
-#' @return a data.frame of occurence records
+#' @return a data.frame of occurence records. Details of the data providers that 
+#' contributed to the data returned is given as a 'providers' attribute
 #' @author Stuart Ball, JNCC \email{stuart.ball@@jncc.gov.uk} and Tom August, CEH \email{tomaug@@ceh.ac.uk}
 #' @seealso \code{\link{getFeature}}, \code{\link{getTVKQuery}}, \code{\link{listVCs}},
 #' \code{\link{listDatasets}}, \code{\link{listGroups}}
@@ -40,6 +41,8 @@
 #'                        
 #'  dt3 <- getOccurrences(group="quillwort", startYear="1990", endYear="2010",
 #'                        VC="Shetland (Zetland)")
+#'                        
+#'                        
 #' }
 #' 
 getOccurrences <- function(tvks=NULL, datasets=NULL, startYear=NULL, 
@@ -102,9 +105,8 @@ getOccurrences <- function(tvks=NULL, datasets=NULL, startYear=NULL,
         
     }#end of while
     
-    ## we are only interested in presences (not absences)
     if ("absence" %in% colnames(d_master)) {
-        d_master <- d_master[which(d_master$absence == FALSE),]
+        if(TRUE %in% d_master$absence) warning('NOTE: There are absence records in this dataset')
     }
     
     ## Format date columns as dates
@@ -118,6 +120,14 @@ getOccurrences <- function(tvks=NULL, datasets=NULL, startYear=NULL,
         d_master$latitude <- latlong$LATITUDE
         d_master$longitude <- latlong$LONGITUDE
         
+    }
+    
+    ## Add an attribute giving details of the data providers
+    if(!is.null(d_master)){
+        if(!silent) cat('Requesting data providers information\n')
+        datasets <- unique(d_master$datasetKey)
+        providers <- dataProviders(datasets=datasets)
+        attr(x=d_master,which='providers') <- providers
     }
     
     ## Write out a statement about the T's & C's

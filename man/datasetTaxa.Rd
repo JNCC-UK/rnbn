@@ -1,0 +1,34 @@
+\name{datasetTaxa}
+\alias{datasetTaxa}
+\title{Get a list of taxa present in a given dataset}
+\usage{
+datasetTaxa(datasets = NULL)
+}
+\arguments{
+  \item{datasets}{A string (or list of strings) giving the
+  dataset keys to search within. Use
+  \code{\link{listDatasets}} to find dataset keys, or visit
+  the NBN gateway \url{https://data.nbn.org.uk/Datasets}}
+}
+\value{
+a data.frame of taxa details
+}
+\description{
+Gets a list of taxa that are included in a given dataset or
+list of datasets.
+}
+\examples{
+\dontrun{
+
+taxa <- datasetTaxa(datasets=c('GA001044','GA001011'))
+
+}
+}
+\author{
+Stuart Ball, JNCC \email{stuart.ball@jncc.gov.uk} and Tom
+August, CEH \email{tomaug@ceh.ac.uk}
+}
+\seealso{
+\code{\link{listDatasets}}
+}
+

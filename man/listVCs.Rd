@@ -2,15 +2,15 @@
 \alias{listVCs}
 \title{Get list of vice-counties}
 \usage{
-  listVCs()
+listVCs()
 }
 \value{
-  A dataframe containing the name and featureID of each
-  vice-county.
+A dataframe containing the name and featureID of each
+vice-county.
 }
 \description{
-  Gives a dataframe of the Watsonian vice-counties and
-  their keys for reference.
+Gives a dataframe of the Watsonian vice-counties and their
+keys for reference.
 }
 \examples{
 \dontrun{
@@ -18,9 +18,9 @@
 }
 }
 \author{
-  Stuart Ball, JNCC \email{stuart.ball@jncc.gov.uk}
+Stuart Ball, JNCC \email{stuart.ball@jncc.gov.uk}
 }
 \seealso{
-  \code{\link{getFeature}}, \code{\link{getOccurrences}}
+\code{\link{getFeature}}, \code{\link{getOccurrences}}
 }
 

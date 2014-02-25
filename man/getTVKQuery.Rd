@@ -2,8 +2,8 @@
 \alias{getTVKQuery}
 \title{Gets TVKs for a query}
 \usage{
-  getTVKQuery(query = NULL, species_only = TRUE,
-    rec_only = FALSE, top = FALSE)
+getTVKQuery(query = NULL, species_only = TRUE, rec_only = FALSE,
+  top = FALSE)
 }
 \arguments{
   \item{query}{A query string. This can range from latin
@@ -24,15 +24,15 @@
   care!}
 }
 \value{
-  A dataframe containing information on each taxa entry
-  that matches the query string in rows. ptaxonVersionKey
-  (preferred taxon version key) should be used when
-  searching for records.
+A dataframe containing information on each taxa entry that
+matches the query string in rows. ptaxonVersionKey
+(preferred taxon version key) should be used when searching
+for records.
 }
 \description{
-  Given a search term this function returns taxon
-  information, including pTVKs, for the first 25 taxa that
-  match that search on the NBN.
+Given a search term this function returns taxon
+information, including pTVKs, for the first 25 taxa that
+match that search on the NBN.
 }
 \examples{
 \dontrun{
@@ -40,10 +40,10 @@
 }
 }
 \author{
-  Tom August, CEH \email{tomaug@ceh.ac.uk}
+Tom August, CEH \email{tomaug@ceh.ac.uk}
 }
 \seealso{
-  \code{\link{getGroupSpeciesTVKs}},
-  \code{\link{getOccurrences}}
+\code{\link{getGroupSpeciesTVKs}},
+\code{\link{getOccurrences}}
 }
 

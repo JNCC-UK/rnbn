@@ -2,10 +2,9 @@
 \alias{makenbnurl}
 \title{Build the URL to call NBN web-services}
 \usage{
-  makenbnurl(service = NULL, tvks = NULL, datasets = NULL,
-    feature = NULL, startYear = NULL, endYear = NULL,
-    list = NULL, VC = NULL, group = NULL, query = NULL,
-    gridRef = NULL)
+makenbnurl(service = NULL, tvks = NULL, datasets = NULL, feature = NULL,
+  startYear = NULL, endYear = NULL, list = NULL, VC = NULL,
+  group = NULL, query = NULL, gridRef = NULL)
 }
 \arguments{
   \item{service}{the service you want to call. One of
@@ -44,25 +43,24 @@
   to search for occurrences}
 }
 \value{
-  the URL to call - a character string
+the URL to call - a character string
 }
 \description{
-  The base URL for the RESTful services is:
-  \url{http://http://staging.testnbn.net/api/} Parameters
-  can be added, depending on the service called. \cr\cr The
-  following services are available at the time of writing:
-  \cr
-  \code{taxonObservations?ptvk=<tvk>&datasetKey=<dataset>&startYear=<year>
-  &endYear=<year>&featureID=<feature>} - get observations
-  for the given (list of) Taxon Version Keys (TVKs) for the
-  given (list of) dataset keys optionally with dates
-  between startYear and endYear and within the spatial
-  feature, featureID (e.g. a vice-county). If no dataset
-  keys are given then all publically available data for the
-  taxa will be returned \cr\cr \code{features/<featureID>}
-  - get details about a particular location given its
-  <featureID> \cr\cr \code{taxa/<tvk>} - get details about
-  a taxon given its <tvk>
+The base URL for the RESTful services is:
+\url{https://data.nbn.org.uk/api/} Parameters can be added,
+depending on the service called. \cr\cr The following
+services are available at the time of writing: \cr
+\code{taxonObservations?ptvk=<tvk>&datasetKey=<dataset>&startYear=<year>
+&endYear=<year>&featureID=<feature>} - get observations for
+the given (list of) Taxon Version Keys (TVKs) for the given
+(list of) dataset keys optionally with dates between
+startYear and endYear and within the spatial feature,
+featureID (e.g. a vice-county). If no dataset keys are
+given then all publically available data for the taxa will
+be returned \cr\cr \code{features/<featureID>} - get
+details about a particular location given its <featureID>
+\cr\cr \code{taxa/<tvk>} - get details about a taxon given
+its <tvk>
 }
 \examples{
 makenbnurl(service="obs", tvks="NBNSYS0000007073")
@@ -73,6 +71,6 @@ makenbnurl(service="feature", feature="284443")
 makenbnurl(service="taxon", tvks="NBNSYS0000007073")
 }
 \author{
-  Stuart Ball, JNCC \email{stuart.ball@jncc.gov.uk}
+Stuart Ball, JNCC \email{stuart.ball@jncc.gov.uk}
 }
 

@@ -28,7 +28,7 @@ NBNCookies <- function(path = getwd(), remove = FALSE){
         
         } else {
             
-            cat('Cookies found\n')    
+            cat('Cookies found, not deleted\n')    
             
         }
     
@@ -38,6 +38,6 @@ NBNCookies <- function(path = getwd(), remove = FALSE){
         
     }
     
-    return(NULL)
+    return()
     
 }

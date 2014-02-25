@@ -2,21 +2,21 @@
 \alias{getTaxonomy}
 \title{Get the taxonomical heirarchy for a given taxon}
 \usage{
-  getTaxonomy(tvks = NULL)
+getTaxonomy(tvks = NULL)
 }
 \arguments{
   \item{tvks}{A Taxon Version Key (TVK) which is a
   16-character string ID}
 }
 \value{
-  A dataframe containing the JSON object returned by the
-  NBN Gateway.
+A dataframe containing the JSON object returned by the NBN
+Gateway.
 }
 \description{
-  Given the Taxon Version Key (a 16-character string), this
-  function get details of the taxonomical heirarchy above
-  the given TVK. This gives the rank, name and preferred
-  Taxon Version Key for each level of the taxonomy
+Given the Taxon Version Key (a 16-character string), this
+function get details of the taxonomical heirarchy above the
+given TVK. This gives the rank, name and preferred Taxon
+Version Key for each level of the taxonomy
 }
 \examples{
 \dontrun{
@@ -24,9 +24,9 @@
 }
 }
 \author{
-  Tom August, CEH \email{tom.august@ceh.ac.uk}
+Tom August, CEH \email{tom.august@ceh.ac.uk}
 }
 \seealso{
-  \code{\link{getFeature}}, \code{\link{getOccurrences}}
+\code{\link{getFeature}}, \code{\link{getOccurrences}}
 }
 
