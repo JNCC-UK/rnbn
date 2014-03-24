@@ -41,7 +41,9 @@
 #'                        
 #'  dt3 <- getOccurrences(group="quillwort", startYear="1990", endYear="2010",
 #'                        VC="Shetland (Zetland)")
-#'                        
+#'  
+#'  # Get the data providers information
+#'  dp <- attr(dt1,'providers')                      
 #'                        
 #' }
 #' 
@@ -131,7 +133,7 @@ getOccurrences <- function(tvks=NULL, datasets=NULL, startYear=NULL,
     }
     
     ## Write out a statement about the T's & C's
-    if(!acceptTandC) message('IMPORTANT: By using this package you are agreeing to the Gateway Terms & Conditions and Privacy Policy. These can be found at https://data.nbn.org.uk/Terms. This message can be suppressed using the acceptTandC argument') 
+    if(!acceptTandC) message('IMPORTANT: https://data.nbn.org.uk/Terms By using this package you are agreeing to the Gateway Terms & Conditions and Privacy Policy. This message can be suppressed using the acceptTandC argument') 
     
     return(d_master)
 }

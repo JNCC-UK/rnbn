@@ -48,9 +48,13 @@ nbnLogin <- function(username = NULL, password = NULL){
         attr(resp_who,'class') <- NULL
         resp <- fromJSON(resp_who, asText = TRUE) # resp$id == 1 if we are not logged in
         #print(resp)
-    
+        
+        # Sometimes (I think when cookies expire) the user details are reported not in 
+        # a simple list but as a list within a list. Here we deal with that
+        if('user' %in% names(resp)) resp <- resp$user
+        
         #Login in with dialog box
-        if(resp['id'] == 1){
+        if(as.numeric(resp['id']) == 1){
             
             # Create the directory for cookies
             #dir.create(cookiePath, showWarnings = FALSE)

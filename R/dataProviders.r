@@ -35,7 +35,7 @@ dataProviders <- function(datasets=NULL) {
         
         json <- runnbnurl(service="p", datasets=dataset)
         
-        if (length(json) > 0) {
+        if (length(json) > 0 & class(json) == 'list'){
             
             # Get lead org data
             organisation <- as.data.frame(json$organisation)[,columnNames]
@@ -73,14 +73,17 @@ dataProviders <- function(datasets=NULL) {
         }
     }    
     
-    # Get rid of bits of HTML
-    org_master <- unique(as.data.frame(lapply(org_master,FUN=cleanFun)))
-        
-    # Sort the master df by name
+    # If we have some data do some tidying up
     if(!is.null(org_master)){
-        org_master <- org_master[with(org_master, order(name)), ]
-        row.names(org_master) <- 1:nrow(org_master)    
+        # Get rid of bits of HTML
+        org_master <- unique(as.data.frame(lapply(org_master,FUN=cleanFun)))
+            
+        # Sort the master df by name
+        if(!is.null(org_master)){
+            org_master <- org_master[with(org_master, order(name)), ]
+            row.names(org_master) <- 1:nrow(org_master)    
+        }
     }
-        
+    
     return(org_master)
 }

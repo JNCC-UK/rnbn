@@ -73,6 +73,8 @@ dataset, species, time, location and/or group.
  dt3 <- getOccurrences(group="quillwort", startYear="1990", endYear="2010",
                        VC="Shetland (Zetland)")
 
+ # Get the data providers information
+ dp <- attr(dt1,'providers')
 
 }
 }
