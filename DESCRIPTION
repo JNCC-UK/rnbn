@@ -1,7 +1,7 @@
 Package: rnbn
 Type: Package
 Title: Access NBN data
-Version: 0.1
+Version: 0.1.1
 Date: 2013-04-17
 Author: Stuart Ball & Tom August
 Maintainer: Tom August <tomaug@ceh.ac.uk>

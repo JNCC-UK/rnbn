@@ -4,7 +4,8 @@
 \usage{
 getOccurrences(tvks = NULL, datasets = NULL, startYear = NULL,
   endYear = NULL, VC = NULL, group = NULL, gridRef = NULL,
-  latLong = TRUE, acceptTandC = FALSE, silent = FALSE)
+  latLong = TRUE, acceptTandC = FALSE, silent = FALSE,
+  attributes = FALSE)
 }
 \arguments{
   \item{tvks}{a list of TVKs which are strings of 16
@@ -46,8 +47,12 @@ getOccurrences(tvks = NULL, datasets = NULL, startYear = NULL,
   and conditions supresses the corresponding warning
   message.}
 
-  \item{silent}{If TRUE batch request information is
+  \item{silent}{If \code{TRUE} batch request information is
   supressed}
+
+  \item{attributes}{If \code{FALSE} then attribute data is
+  not returned, this may improve the speed of large
+  requests.}
 }
 \value{
 a data.frame of occurence records. Details of the data

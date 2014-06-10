@@ -38,7 +38,7 @@ dataProviders <- function(datasets=NULL) {
         if (length(json) > 0 & class(json) == 'list'){
             
             # Get lead org data
-            organisation <- as.data.frame(json$organisation)[,columnNames]
+            organisation <- as.data.frame(json$organisation)[,columnNames[columnNames %in% names(as.data.frame(json$organisation))]]
               
             # Get all other orgs data
             if(length(json$contributingOrganisations)!=0){
@@ -60,7 +60,7 @@ dataProviders <- function(datasets=NULL) {
                     }
                     
                     ## cooerce the matrix to a data.frame
-                    contributingOrganisations <- as.data.frame(d, stringsAsFactors = F)[,columnNames] 
+                    contributingOrganisations <- as.data.frame(d, stringsAsFactors = F)[,columnNames[columnNames %in% names(as.data.frame(json$organisation))]] 
                     # Combine the organisations into one dataframe
                     organisation <- rbind(organisation,contributingOrganisations)
                 }

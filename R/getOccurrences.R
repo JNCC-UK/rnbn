@@ -26,7 +26,9 @@
 #' @param acceptTandC if set to \code{TRUE} you accept the NBN gateway terms and 
 #' conditions and privacy policy. These can be found at \url{https://data.nbn.org.uk/Terms}.
 #' Accepting the terms and conditions supresses the corresponding warning message.
-#' @param silent If TRUE batch request information is supressed
+#' @param silent If \code{TRUE} batch request information is supressed
+#' @param attributes If \code{FALSE} then attribute data is not returned, this may
+#' improve the speed of large requests.
 #' @return a data.frame of occurence records. Details of the data providers that 
 #' contributed to the data returned is given as a 'providers' attribute
 #' @author Stuart Ball, JNCC \email{stuart.ball@@jncc.gov.uk} and Tom August, CEH \email{tomaug@@ceh.ac.uk}
@@ -49,7 +51,8 @@
 #' 
 getOccurrences <- function(tvks=NULL, datasets=NULL, startYear=NULL, 
                            endYear=NULL, VC=NULL, group=NULL, gridRef=NULL,
-                           latLong = TRUE, acceptTandC=FALSE, silent=FALSE) {
+                           latLong = TRUE, acceptTandC=FALSE, silent=FALSE,
+                           attributes = FALSE) {
     
     if(!is.null(tvks) & !is.null(group)) stop('group and tvks cannot be used at the same time')
     if(is.null(tvks) & is.null(group) & is.null(gridRef)) stop('One of group, tvks or gridRef must be given')
@@ -78,21 +81,23 @@ getOccurrences <- function(tvks=NULL, datasets=NULL, startYear=NULL,
         
         ## return a JSON object (list of lists)
         json <- runnbnurl(service="obs", tvks=temp_tvks, datasets=datasets, 
-                          startYear=startYear, endYear=endYear, VC=VC, gridRef=gridRef) 
+                          startYear=startYear, endYear=endYear, VC=VC,
+                          gridRef=gridRef, attributes=attributes) 
         
         if (length(json) > 0) {
             ## find the unique names that are used in occ
-            n <- unique(unlist(c(sapply(json, names))))
+            n <- unique(unlist(c(sapply(json, function(x) names(unlist(x))))))
             ## dimension a matrix for the required number of rows and cols
             d <- matrix(nrow=length(json), ncol=length(n), 
                         dimnames=list(seq(1:length(json)),n))
             ## now we can go through the list and insert
             ## the values into the correct cells of the matrix
             ## This should be quick because the matrix is pre-allocated
+            ## The unlisting allows us to bring out the attributes fields
             for (i in 1:length(json)) {
-                for (j in 1:length(json[[i]])) {
-                    k <- grep(names(json[[i]][j]),n)
-                    d[i,k] <- json[[i]][[j]]
+                for (j in 1:length(unlist(json[[i]]))) {
+                    k <- grep(names(unlist(json[[i]])[j]),n)
+                    d[i,k] <- unlist(json[[i]])[[j]]
                 }
             }
             
@@ -126,12 +131,12 @@ getOccurrences <- function(tvks=NULL, datasets=NULL, startYear=NULL,
     
     ## Add an attribute giving details of the data providers
     if(!is.null(d_master)){
-        if(!silent) cat('Requesting data providers information\n')
+        if(!silent) cat("Requesting data providers' information\n")
         datasets <- unique(d_master$datasetKey)
-        providers <- dataProviders(datasets=datasets)
+        providers <- dataProviders(datasets)
         attr(x=d_master,which='providers') <- providers
     }
-    
+        
     ## Write out a statement about the T's & C's
     if(!acceptTandC) message('IMPORTANT: https://data.nbn.org.uk/Terms By using this package you are agreeing to the Gateway Terms & Conditions and Privacy Policy. This message can be suppressed using the acceptTandC argument') 
     

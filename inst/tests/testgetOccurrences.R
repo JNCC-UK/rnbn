@@ -35,7 +35,7 @@ test_that("Check group search", {
     expect_that(sort(unique(dt$pTaxonVersionKey)), equals(c('NBNSYS0000002008','NBNSYS0000002009')))
 })
 rm(dt)
-dt <- getOccurrences(gridRef='SP00', startYear=2008, acceptTandC=TRUE, silent = TRUE)
+dt <- getOccurrences(gridRef='SP00',startYear=2008,endYear=2008,acceptTandC=TRUE, silent = TRUE)
 hecs <- unique(do.call(rbind, lapply(dt$location, FUN=gridRef, format='sq10km'))[,3])
 test_that("Check gridRef only search", {
     expect_that(nrow(dt) > 0, is_true()) 
@@ -46,7 +46,14 @@ test_that("Check gridRef only search", {
 test_that("Check providers are returned", {
     expect_true('providers' %in% names(attributes(dt)))
     expect_is(attr(dt,'providers'), 'data.frame')
-    expect_true(ncol(attr(dt,'providers')) == 7)
+    expect_true(ncol(attr(dt,'providers')) >= 7)
     expect_true('Biological Records Centre' %in% attr(dt,'providers')$name)
 })
 rm(dt)
+WCresults <- getOccurrences(tvks = 'NHMSYS0000332741', startYear = 1999,
+                            endYear = 1999, attributes = TRUE, acceptTandC = TRUE, silent = TRUE)
+test_that("Attributes are returned as expected", {    
+    expect_true('attributes.Comment' %in% names(WCresults))
+    expect_true(length(names(WCresults)[grepl('attributes.',names(WCresults))]) >=3)
+    expect_is(WCresults, 'data.frame')
+})

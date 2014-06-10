@@ -23,6 +23,7 @@
 #' @param group a string giving the name of a group (see \code{\link{listGroups}})
 #' @param query a string used to perform a taxa search
 #' @param gridRef a string giving a gridreference in which to search for occurrences
+#' @param attributes if \code{TRUE} then attribute data is returned
 #' @return a JSON object resulting from the call
 #' @author Stuart Ball, JNCC \email{stuart.ball@@jncc.gov.uk}
 #' @examples \dontrun{ 
@@ -32,12 +33,11 @@
 #' 
 runnbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
                       startYear=NULL, endYear=NULL, list=NULL, VC=NULL, group=NULL,
-                      query=NULL, gridRef=NULL) {
+                      query=NULL, gridRef=NULL, attributes=FALSE) {
     
     url <- makenbnurl(service=service, tvks=tvks, datasets=datasets, feature=feature,
                       startYear=startYear, endYear=endYear, list=list, VC=VC,
-                      group=group, query=query, gridRef=gridRef)
-    #print(url)  
+                      group=group, query=query, gridRef=gridRef, attributes=attributes)
     
     # Set SSL certs globally, if not done then RCurl will not accept the NBN certificate
     options(RCurlOptions = list(cainfo = system.file("CurlSSL", "cacert.pem", package = "RCurl")))
@@ -57,13 +57,13 @@ runnbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
                useragent = agent, followlocation = TRUE, curl=curl)
     
     #if (url.exists(url)) { #this may slow down the function (not sure it works either)
-    #print(url)  
     
     # The server sometimes seems to fail to handshake(?) this is not repeatable and
     # can be resolved by trying again. Here if it fails I get it to try again 5 times
     # before reporting an error
     a=0
     while(a<5){
+        #print(url)
         resp <- try(getURL(url, curl = curl), silent=TRUE)
         if(is.null(attr(resp,'class'))) attr(resp,'class') <- 'success'
         #print(attr(resp,'class'))
@@ -79,17 +79,37 @@ runnbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
     
     # If the response is empty '' pass this on
     if(resp!=''){
-        resp <- try(fromJSON(resp, asText=TRUE), silent = TRUE)
         
-        if(class(resp) == 'try-error'){
-            message <- attr(resp,'condition')$message
+        #Some character strings in the JSON as returned from the gateway
+        #dont play ball in fromJSON, this includes a '\\' in some of the 
+        #attrStr fields (found in red squirrel searches). Here I use gsub
+        #to get rid of these occurrences so that it works. This is annoying
+        removeBSL <- function(x){ #Removes BackSLashes
+            x <- gsub(" \\\\","\\", x)  
+        }
+                
+        resp1 <- try(fromJSON(resp, asText=TRUE), silent = TRUE)
+        
+        if(class(resp1) == 'try-error'){ # If it fails try removing backslashes
+            message <- attr(resp1,'condition')$message
+            warning(paste('Converting JSON failed:', message,'. Attempting to remove problem characters'))
+            resp1 <- try(fromJSON(removeBSL(resp), asText=TRUE), silent = TRUE)    
+        }
+        
+        if(class(resp1) == 'try-error'){ # If it still fails throw an error and return object
+            message <- attr(resp1,'condition')$message
+            resp <<- resp
             stop(paste('When interpreting response from NBN servers:',
                      message,
                      '. This can occur if the NBN servers are experiencing problems.',
                      'If the problem persists report this error to the package maintainers'))  
         } 
+    } else {
+        
+        resp1 <- resp
+    
     }
     
-    return(resp)
+    return(resp1)
 
 }

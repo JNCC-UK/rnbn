@@ -83,7 +83,20 @@ nbnLogin <- function(username = NULL, password = NULL){
                           "&password=", password, sep='')
         
         # Check that login was a success (if not stop)
-        resp <- fromJSON(getURL(urlLogin,curl=curl), asText=TRUE) #login result
+        a=0
+        while(a<5){
+            resp_who <- try(getURL(urlLogin,curl=curl), silent=TRUE)
+            if(is.null(attr(resp_who,'class'))) attr(resp_who,'class') <- 'success'
+            if(grepl('Error report', resp_who)) stop('NBN server return included "Error report" when checking if you are logged in. This can happen when the NBN servers are down, check https://data.nbn.org.uk/ to see if there is a known issue')
+            if(attr(resp_who,'class') == 'try-error'){
+                a=a+1
+                if(a==5) stop(paste('When trying to check your login status the NBN did not produce the expected response, here is the error I am getting:', resp_who))
+            } else {
+                a=999
+            }
+        }
+        resp <- fromJSON(resp_who, asText = TRUE)
+        #login result
         if(!resp$success){
             stop('Username and password invalid, have another go')
         } else {

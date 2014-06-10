@@ -4,7 +4,7 @@
 \usage{
 runnbnurl(service = NULL, tvks = NULL, datasets = NULL, feature = NULL,
   startYear = NULL, endYear = NULL, list = NULL, VC = NULL,
-  group = NULL, query = NULL, gridRef = NULL)
+  group = NULL, query = NULL, gridRef = NULL, attributes = FALSE)
 }
 \arguments{
   \item{service}{the service you want to call. One of
@@ -42,6 +42,9 @@ runnbnurl(service = NULL, tvks = NULL, datasets = NULL, feature = NULL,
 
   \item{gridRef}{a string giving a gridreference in which
   to search for occurrences}
+
+  \item{attributes}{if \code{TRUE} then attribute data is
+  returned}
 }
 \value{
 a JSON object resulting from the call

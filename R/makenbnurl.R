@@ -32,6 +32,7 @@
 #' @param group a string giving the name of a group (see \code{\link{listGroups}})
 #' @param query a string used to search for taxa
 #' @param gridRef a string giving a gridreference in which to search for occurrences
+#' @param attributes if \code{TRUE} then attribute data is returned
 #' @return the URL to call - a character string
 #' @author Stuart Ball, JNCC \email{stuart.ball@@jncc.gov.uk}
 #' @examples
@@ -44,7 +45,7 @@
 #' 
 makenbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
                        startYear=NULL, endYear=NULL, list=NULL, VC=NULL, group=NULL,
-                       query=NULL, gridRef=NULL) {
+                       query=NULL, gridRef=NULL, attributes=FALSE) {
 
     ##----------------------------------------------------------------------
     ## function to check that parameters are correctly formatted
@@ -133,6 +134,9 @@ makenbnurl <- function(service=NULL, tvks=NULL, datasets=NULL, feature=NULL,
                 }
                 if (!is.null(gridRef)) {
                     url <- paste(url, "&gridRef=", gridRef, sep="") 
+                }
+                if (attributes) {
+                    url <- paste(url, "&includeAttributes=true", sep="") 
                 }
             },
                
