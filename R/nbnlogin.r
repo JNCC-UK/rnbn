@@ -65,8 +65,8 @@ nbnLogin <- function(username = NULL, password = NULL){
             dpassword <- UP$password
             
             # Create login URL
-            urlLogin <- paste("https://data.nbn.org.uk/api/user/login?username=",dusername,
-                              "&password=", dpassword, sep='')
+            urlLogin <- paste("https://data.nbn.org.uk/api/user/login?username=", gsub(' ', '%20', dusername),
+                              "&password=", gsub(' ', '%20', dpassword), sep='')
             
             # Check that login was a success (if not stop)
             resp <- fromJSON(getURL(urlLogin,curl=curl), asText=TRUE) #login result
@@ -79,8 +79,8 @@ nbnLogin <- function(username = NULL, password = NULL){
     } else { # If we have specified a username and password
         
         # Create login URL
-        urlLogin <- paste("https://data.nbn.org.uk/api/user/login?username=",username,
-                          "&password=", password, sep='')
+        urlLogin <- paste("https://data.nbn.org.uk/api/user/login?username=", gsub(' ', '%20', username),
+                          "&password=", gsub(' ', '%20', password), sep='')
         
         # Check that login was a success (if not stop)
         a=0
