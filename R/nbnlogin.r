@@ -95,6 +95,8 @@ nbnLogin <- function(username = NULL, password = NULL){
                 a=999
             }
         }
+        
+        attr(resp_who,'class') <- NULL
         resp <- fromJSON(resp_who, asText = TRUE)
         #login result
         if(!resp$success){
