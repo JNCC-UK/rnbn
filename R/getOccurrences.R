@@ -121,12 +121,10 @@ getOccurrences <- function(tvks=NULL, datasets=NULL, startYear=NULL,
     if("endDate" %in% colnames(d_master)) d_master$endDate <- as.Date(d_master$endDate)
     
     ## Add lat long if requested
-    if(latLong & !is.null(d_master)){
-        
-        latlong <- gr2gps_latlon(d_master$location, projection=NULL, centre=TRUE)
+    if(latLong & !is.null(d_master)){ 
+        latlong <- gr2gps_latlon(d_master$location, centre=TRUE)
         d_master$latitude <- latlong$LATITUDE
-        d_master$longitude <- latlong$LONGITUDE
-        
+        d_master$longitude <- latlong$LONGITUDE        
     }
     
     ## Add an attribute giving details of the data providers

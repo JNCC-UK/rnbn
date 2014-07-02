@@ -16,53 +16,32 @@
 #' 
 #' gr2gps_latlon('SU616896')
 
-gr2gps_latlon <-
-function(gridref, precision = NULL, projection = 'OSGB', centre = TRUE){
-  
-  # Setup up variable to hold final output
-  out_latlon = data.frame(LATITUDE = rep(NA, length(gridref)), LONGITUDE = rep(NA, length(gridref)))
-  
-  # Get rid of dodgy gridrefs
-  gridref = fmt_gridref(gridref)
-  
-  # determine precision if not supplied
-  if(is.null(precision)){
-    precision = det_gr_precision(gridref)
-  } else if (length(precision) != length(gridref)){
-    stop("Length of precision does not match length of gridref")
-  }
-  
-  # Determine projection if not supplied
-  if(is.null(projection)){
-    projection = gr_det_country(gridref)
-  } else if( length(projection) != length(gridref) ){
-    stop("Length of projection does not match length of gridref")
-  }
-  
-  # Determine rows are complete
-  i_comp = which(complete.cases(cbind(gridref, precision, projection)))
-  
-  # Determine eastings & northings
-  org_en = gr_let2num(gridref[i_comp], centre = centre)
-  
-  # Determine lat lon (original projection)
-  out_latlon[i_comp,] = OSGridstoLatLong(org_en$EASTING, org_en$NORTHING, projection[i_comp])
-  
-  # Determine indices of gridrefs that are not UTM30 (which will need transformed)
-  i_trans = which(!projection %in% c("UTM30","WGS84") & complete.cases(cbind(gridref, precision, projection)))
-  
-  # Determine Cartesian (Original projection)
-  org_cart = LatLong_Cartesian(out_latlon$LATITUDE[i_trans], out_latlon$LONGITUDE[i_trans], projection[i_trans])
-  
-  # Apply Helmert transformation to convert orginal projections to WGS84 (Cartesian in WGS84)
-  helm_tran = helmert_trans(x =org_cart$x, y = org_cart$y, z = org_cart$z, trans = paste(projection[i_trans],"toWGS84", sep=""))
-  
-  # Convert Cartesian coordinates to Latitude/Longitude (Lat Lon in WGS84)
-  out_latlon[i_trans,] = Cartesian_LatLong(helm_tran$x, helm_tran$y, helm_tran$z, "UTM30")
-  
-  # Return output
-  return(out_latlon)
-  
+gr2gps_latlon = function(gridref, precision = NULL, centre = TRUE){
+    # NOTE FOR UTM30 gridrefs then no need to use helmert transformation as lat long are already in correct projection
+    
+    # Setup up variable to hold final output
+    out_latlon = data.frame(LATITUDE = rep(NA, length(gridref)), LONGITUDE = rep(NA, length(gridref)))
+    
+    # Determine eastings & northings
+    org_en = gr_let2num(gridref, centre = centre, gr_prec = precision, return_projection = TRUE)
+    
+    # Determine lat lon (original projection)
+    out_latlon = OSGridstoLatLong(org_en$EASTING, org_en$NORTHING, org_en$PROJECTION)
+    
+    # Determine indices of gridrefs that are not UTM30 (which will need transformed)
+    i_trans = which(!org_en$PROJECTION %in% c("UTM30","WGS84"))
+    
+    # Determine Cartesian (Original projection)
+    org_cart = LatLong_Cartesian(out_latlon$LATITUDE[i_trans], out_latlon$LONGITUDE[i_trans], org_en$PROJECTION[i_trans])
+    
+    # Apply Helmert transformation to convert original projections to WGS84 (Cartesian in WGS84)
+    helm_tran = helmert_trans(x =org_cart$x, y = org_cart$y, z = org_cart$z, trans = paste(org_en$PROJECTION[i_trans],"toWGS84", sep=""))
+    
+    # Convert Cartesian coordinates to Latitude/Longitude (Lat Lon in WGS84)
+    out_latlon[i_trans,] = Cartesian_LatLong(helm_tran$x, helm_tran$y, helm_tran$z, "UTM30")
+    
+    # Return output
+    return(out_latlon)
 }
 
 #### ADDINTIONAL FUNCTIONS ####
@@ -71,15 +50,17 @@ gr_det_country <-
     function(gridref){
         # Create variable to store output
         cty_out = rep(NA, length(gridref))
+                
+        "(^[[:upper:]]{1,2}[[:digit:]]{2}([[:upper:]]?|[[:upper:]]{2})$)|(^[[:upper:]]{1,2}[[:digit:]]{2,}$)"
         
         # Find British Gridrefs
-        cty_out[grepl('^[[:upper:]]{2}[[:digit:]]{2,}$',gridref) & !grepl('^(WA)|(WV)[[:digit:]]{2,}$',gridref)] = "OSGB"
+        cty_out[grepl('(^[[:upper:]]{2}[[:digit:]]{2}([[:upper:]]?|[[:upper:]]{2})$)|(^[[:upper:]]{2}[[:digit:]]{2,}$)',gridref) & !grepl('^(WA)|(WV)',gridref)] = "OSGB"
         
         # Find Irish Gridrefs
-        cty_out[grepl('^[[:upper:]]{1}[[:digit:]]{2,}$',gridref)] = "OSNI"
+        cty_out[grepl('(^[[:upper:]]{1}[[:digit:]]{2}([[:upper:]]?|[[:upper:]]{2})$)|(^[[:upper:]]{1}[[:digit:]]{2,}$)',gridref)] = "OSNI"
         
         # Find Channel Islands Gridrefs
-        cty_out[grepl('^(WA)|(WV)[[:digit:]]{2,}$',gridref)] = "UTM30"
+        cty_out[grepl('(^(WA)|(WV)[[:digit:]]{2}([[:upper:]]?|[[:upper:]]{2})$)|(^(WA)|(WV)[[:digit:]]{2,}$)',gridref)] = "UTM30"
         
         # Return output object
         return(cty_out)
@@ -95,11 +76,12 @@ gr_let2num <-
             return(ret_obj)
         }
         
-        # Remove any spaces from gridref
+        # Validate grid reference format (removing any spaces or hyphens)
+        gr_comps = gr_components(gridref)
         gridref = gsub("[ -]","",toupper(gridref))
         
         # Setup variable to hold output
-        len_grvec = length(gridref)
+        len_grvec = nrow(gr_comps)
         if(return_projection){
             ret_obj = data.frame( EASTING = rep(NA,len_grvec), NORTHING = rep(NA, len_grvec), PROJECTION = rep(NA, len_grvec), row.names = NULL ) # row.names set to null to stop duplicate row names error
         } else {
@@ -107,31 +89,25 @@ gr_let2num <-
         }
         
         # First find all British Gridrefs
-        cty_inds = which(grepl('^[[:upper:]]{2}[[:digit:]]{2,}$',gridref) & !grepl('^(WA)|(WV)[[:digit:]]{2,}$',gridref))
+        cty_inds = which(grepl('(^[[:upper:]]{2}[[:digit:]]{2}([[:upper:]]?|[[:upper:]]{2})$)|(^[[:upper:]]{2}[[:digit:]]{2,}$)',gr_comps$VALID_GR) & !grepl('^(WA)|(WV)',gr_comps$VALID_GR))
         
         # If British Gridrefs found then calc easting and northings
         if(length(cty_inds) > 0){
             # Get position of gridref letters in grid
-            l1 = match(substr(gridref[cty_inds],1,1), LETTERS[-9])
-            l2 = match(substr(gridref[cty_inds],2,2), LETTERS[-9])
+            l1 = match(substr(gr_comps$CHARS[cty_inds],1,1), LETTERS[-9])
+            l2 = match(substr(gr_comps$CHARS[cty_inds],2,2), LETTERS[-9])
             # Determine initial easting northing digits based on 500km square
             e = (spmod(l1,5) - 1)*5
             n = floor(abs(l1 - 25)/5)*5
-            # Modify intial easting/northing digits based on 100km square
+            # Modify initial easting/northing digits based on 100km square
             e = e + (spmod(l2,5) - 1)
             n = n + floor(abs(l2 - 25)/5)
             # Recalulate for false origin (SV) of British Grid
             e = e - 10
             n = n - 5
-            # skip grid letters to get numeric part of grid ref
-            # Extract digits
-            gr_nums = substr(gridref[cty_inds],3,nchar(gridref[cty_inds]))
-            # Seperate easting and northing digits
-            east_num = substr(gr_nums,1,nchar(gr_nums)/2)
-            north_num = substr(gr_nums,(nchar(gr_nums)/2)+1, nchar(gr_nums))
-            # Extend so nchars of east_num/north_num = 5 right padded with zeros
-            east_num = gsub(" ","0", format(east_num, width = 5))
-            north_num = gsub(" ","0", format(north_num, width = 5))
+            # Extend so easting and northing digits so that nchars of east_num/north_num = 5 right padded with zeros
+            east_num = gsub(" ","0", format(gr_comps$DIGITS_EAST[cty_inds], width = 5))
+            north_num = gsub(" ","0", format(gr_comps$DIGITS_NORTH[cty_inds], width = 5))
             # append numeric part of references to grid index
             e = paste(e,east_num, sep="")
             n = paste(n,north_num, sep="")
@@ -143,23 +119,17 @@ gr_let2num <-
         }
         
         # Find all Irish Gridrefs
-        cty_inds = which(grepl('^[[:upper:]]{1}[[:digit:]]{2,}$',gridref))
+        cty_inds = which(grepl('(^[[:upper:]]{1}[[:digit:]]{2}([[:upper:]]?|[[:upper:]]{2})$)|(^[[:upper:]]{1}[[:digit:]]{2,}$)',gr_comps$VALID_GR))
         # If Irish Gridrefs found the calc easting and northings
         if(length(cty_inds) > 0){
             # Get position of gridref letters in grid
-            l2 = match(substr(gridref[cty_inds],1,1), LETTERS[-9])
-            # Determine intial easting/northing digits based on 100km square
+            l2 = match(substr(gr_comps$CHARS[cty_inds],1,1), LETTERS[-9])
+            # Determine initial easting/northing digits based on 100km square
             e = spmod(l2,5) - 1
             n = floor(abs(l2 - 25)/5)
-            # skip grid letters to get numeric part of grid ref
-            # Extract digits
-            gr_nums = substr(gridref[cty_inds],2,nchar(gridref[cty_inds]))
-            # Seperate easting and northing digits
-            east_num = substr(gr_nums,1,nchar(gr_nums)/2)
-            north_num = substr(gr_nums,(nchar(gr_nums)/2)+1, nchar(gr_nums))
-            # Extend so nchars of east_num/north_num = 5 right padded with zeros
-            east_num = gsub(" ","0", format(east_num, width = 5))
-            north_num = gsub(" ","0", format(north_num, width = 5))
+            # Extend so easting and northing digits so that nchars of east_num/north_num = 5 right padded with zeros
+            east_num = gsub(" ","0", format(gr_comps$DIGITS_EAST[cty_inds], width = 5))
+            north_num = gsub(" ","0", format(gr_comps$DIGITS_NORTH[cty_inds], width = 5))
             # append numeric part of references to grid index
             e = paste(e,east_num, sep="")
             n = paste(n,north_num, sep="")
@@ -171,21 +141,15 @@ gr_let2num <-
         }
         
         # Find all Channel Islands Gridrefs
-        cty_inds = which(grepl('^(WA)|(WV)[[:digit:]]{2,}$',gridref))
+        cty_inds = which(grepl('(^(WA)|(WV)[[:digit:]]{2}([[:upper:]]?|[[:upper:]]{2})$)|(^(WA)|(WV)[[:digit:]]{2,}$)',gr_comps$VALID_GR))
         # If CI gridrefs found then calc easting and northings
         if(length(cty_inds) > 0){
-            # Determine intial easting/northing based on letters
+            # Determine initial easting/northing based on letters
             e = rep(5, length(cty_inds))
-            n = ifelse(grepl('^(WA)[[:digit:]]{2,}$',gridref[cty_inds]),55,54)
-            # skip grid letters to get numeric part of grid ref
-            # Extract digits
-            gr_nums = substr(gridref[cty_inds],3,nchar(gridref[cty_inds]))
-            # Seperate easting and northing digits
-            east_num = substr(gr_nums,1,nchar(gr_nums)/2)
-            north_num = substr(gr_nums,(nchar(gr_nums)/2)+1, nchar(gr_nums))
-            # Extend so nchars of east_num/north_num = 5 right padded with zeros
-            east_num = gsub(" ","0", format(east_num, width = 5))
-            north_num = gsub(" ","0", format(north_num, width = 5))
+            n = ifelse(grepl('^(WA)[[:digit:]]{2,}$',gr_comps$VALID_GR[cty_inds]),55,54)
+            # Extend so easting and northing digits so that nchars of east_num/north_num = 5 right padded with zeros
+            east_num = gsub(" ","0", format(gr_comps$DIGITS_EAST[cty_inds], width = 5))
+            north_num = gsub(" ","0", format(gr_comps$DIGITS_NORTH[cty_inds], width = 5))
             # append numeric part of references to grid index
             e = paste(e,east_num, sep="")
             n = paste(n,north_num, sep="")
@@ -195,22 +159,62 @@ gr_let2num <-
                 ret_obj[cty_inds,"PROJECTION"] = "UTM30"
             }
         }
+        
+        # If any grid refs contained a tetrad or quadrant code then need to modify the easting and northing
+        # Find all grid refs with a tetrad code
+        cty_inds = which(!is.na(gr_comps$TETRAD))
+        # For these grid refs modify the eastings and northings accordingly
+        if(length(cty_inds) > 0){
+            # Get list of tetrad codes (all letters but O)
+            tet_codes = LETTERS[-15]
+            # Determine the position in the tetrad codes vector for each code
+            code_match = match(gr_comps$TETRAD[cty_inds], tet_codes)
+            # Modify easting
+            ret_obj[cty_inds, "EASTING"] = ret_obj[cty_inds,"EASTING"] + ((code_match-1) %/% 5)*2000
+            # Modify northing
+            ret_obj[cty_inds, "NORTHING"] = ret_obj[cty_inds,"NORTHING"] + ((code_match-1) %% 5)*2000
+        }
+        
+        # Find all grid refs with a quadrant code
+        cty_inds = which(!is.na(gr_comps$QUADRANT))
+        # For these grid refs modify the eastings and northings accordingly
+        if(length(cty_inds) > 0){
+            # Get list of tetrad codes (all letters but O)
+            quad_codes = c("SW","NW","SE","NE")
+            # Determine the position in the tetrad codes vector for each code
+            code_match = match(gr_comps$QUADRANT[cty_inds], quad_codes)
+            # Modify easting
+            ret_obj[cty_inds, "EASTING"] = ret_obj[cty_inds,"EASTING"] + ((code_match-1) %/% 2)*5000
+            # Modify northing
+            ret_obj[cty_inds, "NORTHING"] = ret_obj[cty_inds,"NORTHING"] + ((code_match-1) %% 2)*5000
+        }
+        
         # If centre is true the determine precision and give easting and northing for centre of gridref
         if(centre){
             # Determine precision (if gr_prec not supplied)
             if(is.null(gr_prec)){
-                gr_prec = det_gr_precision(gridref)
+                gr_prec = gr_comps$PRECISION
             }
             # Add half of precision to easting and northing
             ret_obj[,c("EASTING", "NORTHING")] = ret_obj[,c("EASTING", "NORTHING")] + (gr_prec/2)
         }
-        # Return easting and Northings    
+        # Return easting and Northings	
         return(ret_obj)
     }
 
 
 OSGridstoLatLong <-
-    function(Easting, Northing, Datum = "OSGB", datum_params = datum_vars, full_output = FALSE) {
+    function(Easting, Northing, Datum = "OSGB", datum_params = NULL, full_output = FALSE) {
+        # If datum_params is null then defaults data.frame included with package will be used
+        if(is.null(datum_params)){
+            # Determine if datum variables data.frame is already loaded from package
+            if(!exists("datum_vars")){
+                # If not load from package
+                data(datum_vars)
+            }
+            # Set datum_params to datum_vars
+            datum_params = datum_vars
+        }
         
         # Determine length of Easting & check same as Northing
         east_len = length(Easting)
@@ -263,7 +267,7 @@ OSGridstoLatLong <-
             
             
             # Calculate other derived variables for projection/datum
-            e2 = 1 - (b^2)/(a^2)        # eccentricity squared
+            e2 = 1 - (b^2)/(a^2)		# eccentricity squared
             n = (a-b)/(a+b)
             n2 = n^2   					# Calculate n squared (used several times so store as variable)
             n3 = n^3					# Calculate n cubed (used several times so store as variable)
@@ -327,7 +331,18 @@ OSGridstoLatLong <-
 
 
 LatLong_Cartesian <-
-    function(Latitude, Longitude, Datum = "OSGB", datum_params = datum_vars, H = NULL, full_output = FALSE){
+    function(Latitude, Longitude, Datum = "OSGB", datum_params = NULL, H = NULL, full_output = FALSE){
+        # If datum_params is null then defaults data.frame included with package will be used
+        if(is.null(datum_params)){
+            # Determine if datum variables data.frame is already loaded from package
+            if(!exists("datum_vars")){
+                # If not load from package
+                data(datum_vars)
+            }
+            # Set datum_params to datum_vars
+            datum_params = datum_vars
+        }
+        
         # Determine length of Latitude & check same as Longitude
         lat_len = length(Latitude)
         if(length(Longitude) != lat_len){
@@ -379,7 +394,6 @@ LatLong_Cartesian <-
                 H = H
             }
             
-            
             # Convert latitude/longitude values into radians
             lat = Latitude[dat_inds] * (pi/180)
             lon = Longitude[dat_inds] * (pi/180)
@@ -402,7 +416,17 @@ LatLong_Cartesian <-
 
 
 helmert_trans <-
-    function(x, y, z, trans = "OSNItoOSGB", trans_params = helmert_trans_vars, full_output = FALSE){
+    function(x, y, z, trans = "OSNItoOSGB", trans_params = NULL, full_output = FALSE){
+        # If trans_params is null then check where helmert_trans_vars data.frame has been loaded from package
+        if(is.null(trans_params)){
+            # If it doesn't exist then load
+            if(!exists("helmert_trans_vars")){
+                data(helmert_trans_vars)
+            }
+            # set trans_params = helmert_trans_vars
+            trans_params = helmert_trans_vars
+        }
+        
         # Determine length of input vars x,y,z and check all 3 variables are same length
         len_x = length(x)
         if(length(y) != len_x | length(z) != len_x){
@@ -423,7 +447,7 @@ helmert_trans <-
         
         # Setup object to hold output data (x,y,z)
         if(full_output){
-            ret_obj = data.frame(org_x = x, org_y = y, org_z = z, TRANS = gsub('toWGS84','',trans), x = rep(NA, len_x), y = rep(NA, len_x), y = rep(NA, len_x), stringsAsFactors = FALSE)
+            ret_obj = data.frame(org_x = x, org_y = y, org_z = z, TRANS = Datum, x = rep(NA, len_x), y = rep(NA, len_x), y = rep(NA, len_x), stringsAsFactors = FALSE)
         } else {
             ret_obj = data.frame(x = rep(NA, len_x), y = rep(NA, len_x), z = rep(NA, len_x), stringsAsFactors = FALSE)
         }
@@ -455,7 +479,18 @@ helmert_trans <-
 
 
 Cartesian_LatLong <-
-    function(x,y,z, Datum = "OSGB", datum_params = datum_vars, full_output = FALSE ){
+    function(x,y,z, Datum = "OSGB", datum_params = NULL, full_output = FALSE ){
+        # If datum_params is null then defaults data.frame included with package will be used
+        if(is.null(datum_params)){
+            # Determine if datum variables data.frame is already loaded from package
+            if(!exists("datum_vars")){
+                # If not load from package
+                data(datum_vars)
+            }
+            # Set datum_params to datum_vars
+            datum_params = datum_vars
+        }
+        
         # Determine length of input vars x,y,z and check all 3 variables are same length
         len_x = length(x)
         if(length(y) != len_x | length(z) != len_x){
@@ -504,7 +539,6 @@ Cartesian_LatLong <-
             b = datum_params$b[par_ind]
             
             
-            
             # Calculate eccentricity squared (e2)
             e2 = (a^2 - b^2)/a^2
             
@@ -544,59 +578,256 @@ Cartesian_LatLong <-
         return(ret_obj)
     }
 
-fmt_gridref <-
-    function(gridref, gr_fmt = NULL){
-        # Setup object to hold output grid refs
-        gr_out = rep(NA, length(gridref))
-        # convert gridref string to upper case
-        gridref = toupper(gridref)
-        # Replace any spaces, punctuation or control characters
-        gridref = gsub("[[:space:][:cntrl:][:punct:]]", "", gridref)
-        # Check that gridref conforms to grid reference pattern after removals
-        # Get indices of gridrefs which are in a valid format
-        gr_inds = which(grepl("^[[:upper:]]{1,2}[[:digit:]]{2,}([[:upper:]]?|[[:upper:]]{2})$", gridref))
-        # Copy valid gridrefs to output object
-        gr_out[gr_inds] = gridref[gr_inds]
-        # Extract components where gr_fmt is not NULL (1 = Whole gridref minus tet/quad codes, 2 = Inital letter(s), 3 = Digits only, 4 = Tetrad/Quad only, 5 = Tetrad only, 6 = Quadrant only)
-        if(!is.null(gr_fmt)){
-            gr_out = gsub("^(([[:upper:]]{1,2})([[:digit:]]{2,}))(([[:upper:]]?)|([[:upper:]]{2}))$", paste("\\",gr_fmt, sep=""), gr_out)
-        }
-        # Return formatted gridref
-        return(gr_out)
+fmt_gridref = function(gridref, gr_fmt = NULL){
+    # Setup object to hold output grid refs
+    gr_out = rep(NA, length(gridref))
+    # convert gridref string to upper case
+    gridref = toupper(gridref)
+    # Replace any spaces, punctuation or control characters
+    gridref = gsub("[[:space:][:cntrl:][:punct:]]", "", gridref)
+    # Check that gridref conforms to grid reference pattern after removals
+    # Get indices of gridrefs which are in a valid format
+    gr_inds = which(grepl("^[[:upper:]]{1,2}[[:digit:]]{2,}([[:upper:]]?|[[:upper:]]{2})$", gridref))
+    # Copy valid gridrefs to output object
+    gr_out[gr_inds] = gridref[gr_inds]
+    # Extract components where gr_fmt is not NULL (1 = Whole gridref minus tet/quad codes, 2 = Inital letter(s), 3 = Digits only, 4 = Tetrad/Quad only, 5 = Tetrad only, 6 = Quadrant only)
+    if(!is.null(gr_fmt)){
+        gr_out = gsub("^(([[:upper:]]{1,2})([[:digit:]]{2,}))(([[:upper:]]?)|([[:upper:]]{2}))$", paste("\\",gr_fmt, sep=""), gr_out)
     }
+    # Return formatted gridref
+    return(gr_out)
+}
 
-det_gr_precision <-
-    function(gridref){
-        # Convert letters to upppercase
-        gridref = toupper(gridref)
+det_gr_precision <- function(
+    gridref
+){
+    # Convert letters to uppercase
+    gridref = toupper(gridref)
+    
+    # Set up variable to store output
+    prec_out = rep(NA,length(gridref))
+    
+    # Find valid gridrefs
+    v_inds = which(grepl("(^[[:upper:]]{1,2}[[:digit:]]{2}([[:upper:]]?|[[:upper:]]{2})$)|(^[[:upper:]]{1,2}[[:digit:]]{2,}$)", gridref) & nchar(gsub("^(([[:upper:]]{1,2})([[:digit:]]{2,}))(([[:upper:]]?)|([[:upper:]]{2}))$", "\\3", gridref)) %% 2 == 0)
+    
+    # Split into components
+    gr_char = gsub("^(([[:upper:]]{1,2})([[:digit:]]{2,}))(([[:upper:]]?)|([[:upper:]]{2}))$", "\\2", gridref[v_inds])
+    gr_digits = gsub("^(([[:upper:]]{1,2})([[:digit:]]{2,}))(([[:upper:]]?)|([[:upper:]]{2}))$", "\\3", gridref[v_inds])
+    gr_tet = gsub("^(([[:upper:]]{1,2})([[:digit:]]{2,}))(([[:upper:]]?)|([[:upper:]]{2}))$", "\\5", gridref[v_inds])
+    gr_quad = gsub("^(([[:upper:]]{1,2})([[:digit:]]{2,}))(([[:upper:]]?)|([[:upper:]]{2}))$", "\\6", gridref[v_inds])
+    
+    # Determine number of digits pairs
+    n_pairs = nchar(gr_digits)/2
+    
+    # Determine precison based on gr
+    gr_prec = 10^5 / 10^n_pairs
+    
+    # If gr_tet contains valid letter then ignore precision based on gridref length and assign 2000
+    gr_prec[gr_tet %in% LETTERS[-15]] = 2000
+    # If not valid tetrad code in gr_tet then set to NA (i.e. O is not a valid tetrad code)
+    gr_prec[!gr_tet %in% LETTERS[-15] & gr_tet != ""] = NA
+    
+    # If gr_quad contains valid letter then ignore precision based on gridref length and assign 5000
+    gr_prec[gr_quad %in% c("NW","NE","SW","SE")] = 5000
+    # If not valid quadrant code in gr_tet then set to NA
+    gr_prec[!gr_quad %in% c("NW","NE","SW","SE") & gr_quad != ""] = NA
+    
+    # Write gr_prec values to output variable
+    prec_out[v_inds] = gr_prec
+    
+    # Return output variable
+    return(prec_out)
+}
+gr_components <- function(gridref, output_col = NULL){
+    
+    # Convert letters to uppercase
+    gridref = toupper(gridref)
+    
+    # Set up variable to store output
+    gr_comps = data.frame(GRIDREF = gridref, VALID_GR = NA, PRECISION = NA, CHARS = NA, DIGITS = NA, DIGITS_EAST = NA, DIGITS_NORTH = NA, TETRAD = NA, QUADRANT = NA)
+    
+    # Check values for output_col if supplied
+    if(!is.null(output_col)){	
+        if(!all(toupper(output_col) %in% names(gr_comps))){
+            stop("Supplied output column name not recognised, valid values are:\n\t", paste(shQuote(names(gr_comps)), collapse = ", "))
+        }
+    }
+    
+    # Find valid gridrefs
+    v_inds = which(grepl("(^[[:upper:]]{1,2}[[:digit:]]{2}([[:upper:]]?|[[:upper:]]{2})$)|(^[[:upper:]]{1,2}[[:digit:]]{2,}$)", gsub("[ -]","",gridref)) & nchar(gsub("^(([[:upper:]]{1,2})([[:digit:]]{2,}))(([[:upper:]]?)|([[:upper:]]{2}))$", "\\3", gsub("[ -]","",gridref))) %% 2 == 0)
+    
+    if(length(v_inds) > 0){
         
-        # Set up variable to store output
-        prec_out = rep(NA,length(gridref))
-        
-        # Find valid gridrefs
-        v_inds = which(grepl("(^[[:upper:]]{1,2}[[:digit:]]{2}([[:upper:]]?|[[:upper:]]{2})$)|(^[[:upper:]]{1,2}[[:digit:]]{2,}$)", gridref) & nchar(gsub("^(([[:upper:]]{1,2})([[:digit:]]{2,}))(([[:upper:]]?)|([[:upper:]]{2}))$", "\\3", gridref)) %% 2 == 0)
+        # Update valid gridrefs to data.frame
+        gr_comps[v_inds,"VALID_GR"] = gsub("[ -]","", gridref[v_inds])
         
         # Split into components
-        gr_char = gsub("^(([[:upper:]]{1,2})([[:digit:]]{2,}))(([[:upper:]]?)|([[:upper:]]{2}))$", "\\2", gridref[v_inds])
-        gr_digits = gsub("^(([[:upper:]]{1,2})([[:digit:]]{2,}))(([[:upper:]]?)|([[:upper:]]{2}))$", "\\3", gridref[v_inds])
-        gr_tet = gsub("^(([[:upper:]]{1,2})([[:digit:]]{2,}))(([[:upper:]]?)|([[:upper:]]{2}))$", "\\5", gridref[v_inds])
-        gr_quad = gsub("^(([[:upper:]]{1,2})([[:digit:]]{2,}))(([[:upper:]]?)|([[:upper:]]{2}))$", "\\6", gridref[v_inds])
+        # Characters
+        gr_comps[v_inds,"CHARS"] = gsub("^(([[:upper:]]{1,2})([[:digit:]]{2,}))(([[:upper:]]?)|([[:upper:]]{2}))$", "\\2", gr_comps$VALID_GR[v_inds])
+        # Digits
+        gr_comps[v_inds,"DIGITS"] = gsub("^(([[:upper:]]{1,2})([[:digit:]]{2,}))(([[:upper:]]?)|([[:upper:]]{2}))$", "\\3", gr_comps$VALID_GR[v_inds])
+        # split digits into east and north
+        len_digit = nchar(gr_comps$DIGITS[v_inds])
+        gr_comps[v_inds, "DIGITS_EAST"] = substr(gr_comps$DIGITS[v_inds], 1, len_digit/2)
+        gr_comps[v_inds, "DIGITS_NORTH"] = substr(gr_comps$DIGITS[v_inds], (len_digit/2)+1, len_digit)
+        # Determine precision based on digits
+        gr_comps[v_inds,"PRECISION"] = 10^5 / 10^(len_digit[v_inds]/2)
+        # Tetrad
+        gr_comps[v_inds,"TETRAD"] = gsub("^(([[:upper:]]{1,2})([[:digit:]]{2,}))(([[:upper:]]?)|([[:upper:]]{2}))$", "\\5", gr_comps$VALID_GR[v_inds])
+        # Find blank string values in gr_tet and replace with NA
+        na_inds = which(!gr_comps$TETRAD %in% LETTERS[-15])
+        if(length(na_inds) > 0){
+            gr_comps[na_inds,"TETRAD"] = NA
+        }
+        # Quadrant
+        gr_comps[v_inds,"QUADRANT"] = gsub("^(([[:upper:]]{1,2})([[:digit:]]{2,}))(([[:upper:]]?)|([[:upper:]]{2}))$", "\\6", gr_comps$VALID_GR[v_inds])
+        # Find blank string values in gr_tet and replace with NA
+        na_inds = which(!gr_comps$QUADRANT %in% c("NW","NE","SW","SE"))
+        if(length(na_inds) > 0){
+            gr_comps[na_inds,"QUADRANT"] = NA
+        }
         
-        # Determine number of digits pairs
-        n_pairs = nchar(gr_digits)/2
+        # Modify precision if tetrad or quadrant is not null
+        # Tetrad
+        gr_comps[grepl("^[[:upper:]]{1,2}[[:digit:]]{2}[[:upper:]]{1,2}$", gr_comps$VALID_GR) & !is.na(gr_comps$TETRAD),"PRECISION"] = 2000
+        # quadrant
+        gr_comps[grepl("^[[:upper:]]{1,2}[[:digit:]]{2}[[:upper:]]{1,2}$", gr_comps$VALID_GR) & !is.na(gr_comps$QUADRANT),"PRECISION"] = 5000
         
-        # Determine precison based on gr
-        gr_prec = 10^5 / 10^n_pairs
-        
-        # If gr_tet contains valid letter then ignore precision based on gridref length and assign 2000
-        gr_prec[gr_tet %in% LETTERS[-15]] = 2000
-        
-        # If gr_quad contains valid letter then ignore precision based on gridref length and assign 5000
-        gr_prec[gr_quad %in% c("NW","NE","SW","SE")] = 5000
-        
-        # Write gr_prec values to output variable
-        prec_out[v_inds] = gr_prec
-        
-        # Return output variable
-        return(prec_out)
+        # Modify valid_gr to remove any gridrefs that had non-valid tetrad/quadrant codes
+        na_inds = which(grepl("^[[:upper:]]{1,2}[[:digit:]]{2}[[:upper:]]{1,2}$", gr_comps$VALID_GR) & is.na(gr_comps$TETRAD) & is.na(gr_comps$QUADRANT))
+        if(length(na_inds) > 0){
+            gr_comps[na_inds,-1] = NA
+        }
+    }		
+    
+    # If output_col is null then output all columns otherwise only output requested columns
+    if(is.null(output_col)){
+        out_obj = gr_comps
+    } else {
+        out_obj = gr_comps[,toupper(output_col)]
     }
+    
+    # Return output object
+    return(out_obj)
+}
+
+det_tet_quad <- function(
+    gridref,
+    precision = NULL,
+    prec_out = NULL
+){
+    # Setup output object
+    out_obj = data.frame(TETRAD_GR = rep(NA, length(gridref)), QUADRANT_GR = NA)
+    
+    # Split gridref into components (will also check gridref sytax is correct)
+    gr_comps = gr_components(gridref)
+    
+    gr_inds = which(nchar(gr_comps$DIGITS) >= 2 & !is.na(gr_comps$VALID_GR))	
+    sq10 = rep(NA, length(gridref))
+    sq10[gr_inds] = paste(gr_comps$CHARS[gr_inds], substr(gr_comps$DIGITS_EAST[gr_inds],1,1), substr(gr_comps$DIGITS_NORTH[gr_inds],1,1), sep="")
+    
+    # All gridrefs that have valid tetrad/quadrant codes can be filled directly to out_obj
+    # Tetrads
+    gr_inds = which(!is.na(gr_comps$TETRAD))
+    if(length(gr_inds) > 0){
+        out_obj[gr_inds,"TETRAD_GR"] = paste(sq10[gr_inds], gr_comps$TETRAD[gr_inds], sep="")
+    }
+    #Quadrants
+    gr_inds = which(!is.na(gr_comps$QUADRANT))
+    if(length(gr_inds) > 0){
+        out_obj[gr_inds,"QUADRANT_GR"] = paste(sq10[gr_inds], gr_comps$QUADRANT[gr_inds], sep="")
+    }
+    
+    # If original gridref had tetrad code then where can be mapped directly to quadrant then do so
+    # Find gridrefs with calculated precision of 2000 i.e. those that had a tetrad code in the grid ref
+    gr_inds = which(gr_comps$PRECISION == 2000)
+    if(length(gr_inds) > 0){
+        # SW
+        gr_inds = which(gr_comps$PRECISION == 2000 & gr_comps$TETRAD %in% c("A","B","F","G"))
+        if(length(gr_inds) > 0){
+            out_obj[gr_inds,"QUADRANT_GR"] = paste(sq10[gr_inds], "SW", sep="") 
+        }
+        # NW
+        gr_inds = which(gr_comps$PRECISION == 2000 & gr_comps$TETRAD %in% c("D","E","J","I"))
+        if(length(gr_inds) > 0){
+            out_obj[gr_inds,"QUADRANT_GR"] = paste(sq10[gr_inds], "NW", sep="") 
+        }
+        # SE
+        gr_inds = which(gr_comps$PRECISION == 2000 & gr_comps$TETRAD %in% c("Q","R","V","W"))
+        if(length(gr_inds) > 0){
+            out_obj[gr_inds,"QUADRANT_GR"] = paste(sq10[gr_inds], "SE", sep="") 
+        }
+        # NE
+        gr_inds = which(gr_comps$PRECISION == 2000 & gr_comps$TETRAD %in% c("T","U","Y","Z"))
+        if(length(gr_inds) > 0){
+            out_obj[gr_inds,"QUADRANT_GR"] = paste(sq10[gr_inds], "NE", sep="") 
+        }
+    }		
+    
+    
+    # Find all valid gridrefs where precision is high enough
+    gr_inds = which(gr_comps$PRECISION <= 1000)
+    
+    if(length(gr_inds) > 0){
+        
+        # Extract relevant digits for tetrad/quadrant estimation
+        code_e = as.numeric(substr(gr_comps$DIGITS_EAST[gr_inds],2,2))
+        code_n = as.numeric(substr(gr_comps$DIGITS_NORTH[gr_inds],2,2))
+        
+        # Determine tetrad code from easting and northing digits (can perhaps
+        # Get list of tetrad codes (no O)
+        tet_codes = LETTERS[-15]
+        # Get tetrad code for each gridref of suitable precision
+        tets = tet_codes[(code_e%/%2)*5 + (code_n%/%2)+1]
+        out_obj[gr_inds,"TETRAD_GR"] = paste(sq10[gr_inds],tets, sep="")
+        
+        # Determine quadrant codes from easting and northing digits
+        # Build vector of quadrant codes (in correct order)
+        quad_codes = c("SW","NW","SE","NE")
+        # Get tetrad code for each gridref of suitable precision
+        quads = quad_codes[(code_e%/%5)*2 + (code_n%/%5)+1]
+        out_obj[gr_inds,"QUADRANT_GR"] = paste(sq10[gr_inds],quads, sep="")
+        
+    } 
+    
+    # If precision is supplied determine if it matches value estimated from gridref
+    if(!is.null(precision)){
+        # Check that precision is either a vector of length gridref or a single value
+        if( !(length(precision) == 1 | length(precision) == length(gridref)) ){
+            stop("precision does not match gridref length, supply either single value or vector of same length as gridref")
+        }
+        # Find non-matching precisions
+        # Find non-matching non padded gridrefs (i.e. ones that shouldn't be wrong)
+        gr_inds = which(gr_comps$PRECISION != precision & gr_comps$PRECISION != 1000 & (precision != 2000 | precision != 5000) )
+        # Find all non-matched precision values
+        if(length(gr_inds) > 0){
+            stop("Precision supplied does not match determined precision for", length(gr_inds), " grid refs")
+        }
+        # If estimated precision = 1000 and supplied prec = 2000 or 5000 then assume tetrad/quadrant padded values (e.g. BRC type data)
+        # Padded tetrads
+        # Note if tetrad grid ref and tetrad code in (C,H,K,L,M,N,P,S,X) then quadrant cannot be uniquely determined
+        # Find grid refs matching this criteria
+        gr_inds = which(gr_comps$PRECISION != precision & gr_comps$PRECISION == 1000 & precision == 2000 & grepl("^[[:alpha:]]{1,2}[[:digit:]]{2}[CHKLMNPSX]$",out_obj$TETRAD_GR))
+        # Set quadrant to NA
+        if(length(gr_inds) > 0){
+            out_obj[gr_inds,"QUADRANT_GR"] = NA
+        }
+        # Padded Quadrant
+        # For all padded quadrant codes tetrad cannot be uniquely determined
+        gr_inds = which(gr_comps$PRECISION != precision & gr_comps$PRECISION == 1000 & precision == 5000)
+        # Set quadrant to NA
+        if(length(gr_inds) > 0){
+            out_obj[gr_inds,"TETRAD_GR"] = NA	
+        }
+        
+    }		
+    
+    # Return output object based on prec_out value
+    if(is.null(prec_out)){
+        return(out_obj)
+    } else if(prec_out == 2000){
+        return(out_obj$TETRAD_GR)
+    } else if(prec_out == 5000){
+        return(out_obj$QUADRANT_GR)
+    }
+}

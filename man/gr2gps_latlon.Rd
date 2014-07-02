@@ -2,8 +2,7 @@
 \alias{gr2gps_latlon}
 \title{Covert grid reference to latitude and longitude}
 \usage{
-gr2gps_latlon(gridref, precision = NULL, projection = "OSGB",
-  centre = TRUE)
+gr2gps_latlon(gridref, precision = NULL, centre = TRUE)
 }
 \arguments{
   \item{gridref}{a vector of strings giving grid references
