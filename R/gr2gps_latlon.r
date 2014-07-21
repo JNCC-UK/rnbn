@@ -6,8 +6,6 @@
 #'        the same length as gridref. precision is given in meters as a numeric
 #'        i.e. 10km square = 10000, 1km square = 1000. If NULL then the function
 #'        tries to work out the precision itself.
-#' @param projection specifies the projection of the input and can either be \code{"OSGB"} 
-#'        or \code{"OSNI"}. Defaults to \code{"OSGB"}
 #' @param centre If \code{TRUE} the coordinates for the centre of the cell are given
 #'        else if \code{FALSE} the coordinates for the bottom left corner are given. 
 #' @return A dataframe of results are returned
@@ -207,11 +205,7 @@ OSGridstoLatLong <-
     function(Easting, Northing, Datum = "OSGB", datum_params = NULL, full_output = FALSE) {
         # If datum_params is null then defaults data.frame included with package will be used
         if(is.null(datum_params)){
-            # Determine if datum variables data.frame is already loaded from package
-            if(!exists("datum_vars")){
-                # If not load from package
-                data(datum_vars)
-            }
+
             # Set datum_params to datum_vars
             datum_params = datum_vars
         }
@@ -334,11 +328,6 @@ LatLong_Cartesian <-
     function(Latitude, Longitude, Datum = "OSGB", datum_params = NULL, H = NULL, full_output = FALSE){
         # If datum_params is null then defaults data.frame included with package will be used
         if(is.null(datum_params)){
-            # Determine if datum variables data.frame is already loaded from package
-            if(!exists("datum_vars")){
-                # If not load from package
-                data(datum_vars)
-            }
             # Set datum_params to datum_vars
             datum_params = datum_vars
         }
@@ -419,10 +408,7 @@ helmert_trans <-
     function(x, y, z, trans = "OSNItoOSGB", trans_params = NULL, full_output = FALSE){
         # If trans_params is null then check where helmert_trans_vars data.frame has been loaded from package
         if(is.null(trans_params)){
-            # If it doesn't exist then load
-            if(!exists("helmert_trans_vars")){
-                data(helmert_trans_vars)
-            }
+
             # set trans_params = helmert_trans_vars
             trans_params = helmert_trans_vars
         }
@@ -483,10 +469,7 @@ Cartesian_LatLong <-
         # If datum_params is null then defaults data.frame included with package will be used
         if(is.null(datum_params)){
             # Determine if datum variables data.frame is already loaded from package
-            if(!exists("datum_vars")){
-                # If not load from package
-                data(datum_vars)
-            }
+
             # Set datum_params to datum_vars
             datum_params = datum_vars
         }

@@ -38,6 +38,4 @@ NBNCookies <- function(path = getwd(), remove = FALSE){
         
     }
     
-    return()
-    
 }

@@ -6,6 +6,7 @@
 #' @export
 #' @param username optional character giving username
 #' @param password optional character giving password
+#' @param verbose logical, if \code{TRUE} successful logins are reported via console
 #' @details This function is used within the getOccurrences function and should not
 #' normally need to be used by users. It automatically handles cookies and only
 #' prompts users for username and password if no cookies exist. The facility to provide
@@ -16,7 +17,7 @@
 #' @author Tom August, CEH \email{tom.august@@ceh.ac.uk}
 
 
-nbnLogin <- function(username = NULL, password = NULL){
+nbnLogin <- function(username = NULL, password = NULL, verbose = FALSE){
     
     # set up Curl
     agent = "rnbn v0.1"
@@ -73,8 +74,10 @@ nbnLogin <- function(username = NULL, password = NULL){
             if(!resp$success){
                 stop('Username and password invalid, have another go')
             } else {
-                print('Login successful')
+                if(verbose) print('Login successful')
             }
+        } else {
+            if(verbose) print(paste('Logged in as', resp$username, 'using cookies'))
         }
     } else { # If we have specified a username and password
         

@@ -14,10 +14,6 @@ gr2gps_latlon(gridref, precision = NULL, centre = TRUE)
   square = 10000, 1km square = 1000. If NULL then the
   function tries to work out the precision itself.}
 
-  \item{projection}{specifies the projection of the input
-  and can either be \code{"OSGB"} or \code{"OSNI"}.
-  Defaults to \code{"OSGB"}}
-
   \item{centre}{If \code{TRUE} the coordinates for the
   centre of the cell are given else if \code{FALSE} the
   coordinates for the bottom left corner are given.}

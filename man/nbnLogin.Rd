@@ -2,12 +2,15 @@
 \alias{nbnLogin}
 \title{Get Login credentials for NBN access}
 \usage{
-nbnLogin(username = NULL, password = NULL)
+nbnLogin(username = NULL, password = NULL, verbose = FALSE)
 }
 \arguments{
   \item{username}{optional character giving username}
 
   \item{password}{optional character giving password}
+
+  \item{verbose}{logical, if \code{TRUE} successful logins
+  are reported via console}
 }
 \description{
 Opens a dialog box for the user to enter credentials if
