@@ -2,10 +2,12 @@ Package: rnbn
 Type: Package
 Title: Access NBN data
 Version: 1.0.0
-Date: 2013-04-17
+Date: 2014-07-22
 Author: Stuart Ball & Tom August
 Maintainer: Tom August <tomaug@ceh.ac.uk>
-Description: Access to NBN data via its web-services
+Description: Access to data held by the National Biodiversity Network (NBN, www.nbn.org.uk). The NBN acts
+as a data warehouse for biological records data in the UK and is the UK node of GBIF.
+In this package NBN data is accessed via its web-services.
 License: MIT + file LICENSE
 Depends: RCurl, RJSONIO, tcltk 
 BuildVignettes: FALSE

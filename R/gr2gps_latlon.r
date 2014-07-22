@@ -433,7 +433,7 @@ helmert_trans <-
         
         # Setup object to hold output data (x,y,z)
         if(full_output){
-            ret_obj = data.frame(org_x = x, org_y = y, org_z = z, TRANS = Datum, x = rep(NA, len_x), y = rep(NA, len_x), y = rep(NA, len_x), stringsAsFactors = FALSE)
+            ret_obj = data.frame(org_x = x, org_y = y, org_z = z, TRANS = trans, x = rep(NA, len_x), y = rep(NA, len_x), z = rep(NA, len_x), stringsAsFactors = FALSE)
         } else {
             ret_obj = data.frame(x = rep(NA, len_x), y = rep(NA, len_x), z = rep(NA, len_x), stringsAsFactors = FALSE)
         }
