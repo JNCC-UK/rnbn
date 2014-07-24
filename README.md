@@ -4,7 +4,11 @@
 ### Installation
 ----------------
 
-To **install** the development version of rnbn, it's easiest to use the `devtools` package:
+You can install the CRAN version of rnbn by using install.packages:
+
+    install.packages(rnbn)
+
+To install the development version of rnbn, it's easiest to use the `devtools` package:
 
     # install.packages("devtools")
     # NOTE: If you have not installed devtools before you will need to restart you R
@@ -24,4 +28,4 @@ A good starting point is the vignette, you can download the pdf [via this link](
 
     help(package='rnbn')
 
-Once you have read the vignette, the help files for each function should guide you the rest of the way. If you have any questions just get in touch via email or using the issues page.
+Once you have read the vignette, the help files for each function should guide you the rest of the way. If you have any questions just get in touch via email or using the [issues page](https://github.com/JNCC-UK/rnbn/issues?state=open).
