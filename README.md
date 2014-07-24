@@ -24,7 +24,7 @@ If you have difficulties installing rnbn using this method try updating your ver
 ### How to use the package
 --------------------------
 
-A good starting point is the vignette, you can download the pdf [via this link](https://github.com/JNCC-UK/rnbn/blob/master/inst/doc/rnbn_vignette.pdf?raw=true). Alternatively once you have installed and loaded the package use the following command and click on the link to "User guides, package vignettes and other documentation".
+A good starting point is the vignette, you can download the pdf [via this link](https://github.com/JNCC-UK/rnbn/raw/master/inst/doc/rnbn.pdf). Alternatively once you have installed and loaded the package use the following command and click on the link to "User guides, package vignettes and other documentation".
 
     help(package='rnbn')
 
