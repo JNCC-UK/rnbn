@@ -1,4 +1,9 @@
 context("Test getOccurrences")
+
+# login
+load('~/rnbn_test.rdata')
+nbnLogin(username = UN_PWD$username, password = UN_PWD$password)
+
 test_that("Errors given", {
     expect_error(getOccurrences(tvks="badger", silent=T), 'Error in makenbnurl*') 
     expect_error(getOccurrences(tvks="NBNSYS0000002987", datasets="G3", silent=T), 'Error in makenbnurl*')
